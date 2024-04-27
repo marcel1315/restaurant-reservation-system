@@ -3,12 +3,12 @@ package com.zerobase.restaurantreservationsystem.entity;
 import jakarta.persistence.*;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 public class Restaurant {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     String name;
     String description;

@@ -8,5 +8,12 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
+
+  jwt:
+    secret: cmVzdGF1cmFudC1yZXNlcnZhdGlvbi1zeXN0ZW0tc2VjcmV0LWtleS1hbmQtdGhpcy1zaG91bGQtYmUtbW9yZS1sZW5ndGh5Cg==
+
+logging:
+  level:
+    org.springframework.security: DEBUG
