@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class RestaurantDto {
+    private long id;
     private String name;
     private String address;
     private String longitude;
@@ -14,6 +15,7 @@ public class RestaurantDto {
 
     public static RestaurantDto of(Restaurant restaurant) {
         return RestaurantDto.builder()
+                .id(restaurant.getId())
                 .name(restaurant.getName())
                 .address(restaurant.getAddress())
                 .longitude(restaurant.getLongitude())

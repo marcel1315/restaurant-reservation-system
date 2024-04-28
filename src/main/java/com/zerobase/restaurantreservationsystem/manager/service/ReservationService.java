@@ -6,6 +6,7 @@ import com.zerobase.restaurantreservationsystem.common.entity.Restaurant;
 import com.zerobase.restaurantreservationsystem.common.exception.MemberNotExistException;
 import com.zerobase.restaurantreservationsystem.common.exception.RestaurantNotExistException;
 import com.zerobase.restaurantreservationsystem.common.repository.MemberRepository;
+import com.zerobase.restaurantreservationsystem.common.type.MemberRole;
 import com.zerobase.restaurantreservationsystem.manager.dto.ReservationApprovalDto;
 import com.zerobase.restaurantreservationsystem.manager.dto.ReservationDto;
 import com.zerobase.restaurantreservationsystem.manager.exception.ReservationNotExistException;
@@ -80,7 +81,7 @@ public class ReservationService {
             break;
         }
 
-        Optional<Member> manager = memberRepository.findByEmailAndRole(username, role);
+        Optional<Member> manager = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
         if (!manager.isPresent()) {
             throw new MemberNotExistException();
         }

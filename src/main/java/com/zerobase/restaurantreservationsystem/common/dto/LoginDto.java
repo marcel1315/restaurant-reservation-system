@@ -1,5 +1,6 @@
 package com.zerobase.restaurantreservationsystem.common.dto;
 
+import com.zerobase.restaurantreservationsystem.common.type.MemberRole;
 import lombok.Data;
 
 @Data
@@ -8,7 +9,11 @@ public class LoginDto {
     public String password;
     public boolean partner;
 
-    public String getRole() {
-        return partner ? "ROLE_MANAGER" : "ROLE_CUSTOMER";
+    public MemberRole getRole() {
+        return partner ? MemberRole.ROLE_MANAGER : MemberRole.ROLE_CUSTOMER;
+    }
+
+    public String getRoleString() {
+        return getRole().toString();
     }
 }

@@ -33,7 +33,7 @@ public class MemberController {
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         boolean success = memberService.login(loginDto);
         if (success) {
-            String token = tokenProvider.generateToken(loginDto.getUsername(), loginDto.getRole());
+            String token = tokenProvider.generateToken(loginDto.getUsername(), loginDto.getRoleString());
             HashMap<String, String> resultMap = new HashMap<>();
             resultMap.put("token", token);
             return ResponseEntity.ok(resultMap);

@@ -1,5 +1,6 @@
 package com.zerobase.restaurantreservationsystem.customer.service;
 
+import com.zerobase.restaurantreservationsystem.common.type.MemberRole;
 import com.zerobase.restaurantreservationsystem.customer.dto.ReservationInputDto;
 import com.zerobase.restaurantreservationsystem.customer.dto.ReservationOutputDto;
 import com.zerobase.restaurantreservationsystem.customer.repository.ReservationRepository;
@@ -62,7 +63,7 @@ public class ReservationService {
             break;
         }
 
-        Optional<Member> manager = memberRepository.findByEmailAndRole(username, role);
+        Optional<Member> manager = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
         if (!manager.isPresent()) {
             throw new MemberNotExistException();
         }

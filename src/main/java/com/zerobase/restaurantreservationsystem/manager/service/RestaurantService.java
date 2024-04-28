@@ -1,5 +1,6 @@
 package com.zerobase.restaurantreservationsystem.manager.service;
 
+import com.zerobase.restaurantreservationsystem.common.type.MemberRole;
 import com.zerobase.restaurantreservationsystem.manager.dto.CreateRestaurantDto;
 import com.zerobase.restaurantreservationsystem.common.entity.Member;
 import com.zerobase.restaurantreservationsystem.common.entity.Restaurant;
@@ -51,7 +52,7 @@ public class RestaurantService {
             break;
         }
 
-        Optional<Member> manager = memberRepository.findByEmailAndRole(username, role);
+        Optional<Member> manager = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
         if (!manager.isPresent()) {
             throw new MemberNotExistException();
         }

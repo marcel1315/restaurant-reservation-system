@@ -1,6 +1,7 @@
 package com.zerobase.restaurantreservationsystem.common.security;
 
 import com.zerobase.restaurantreservationsystem.common.filter.JwtAuthenticationFilter;
+import com.zerobase.restaurantreservationsystem.common.type.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/health").permitAll()
                         .requestMatchers(HttpMethod.POST, "/member/signup").permitAll()
                         .requestMatchers(HttpMethod.POST, "/member/login").permitAll()
-                        .requestMatchers("/manager/**").hasAuthority("ROLE_MANAGER")
+                        .requestMatchers("/manager/**").hasAuthority(MemberRole.ROLE_MANAGER.toString())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
