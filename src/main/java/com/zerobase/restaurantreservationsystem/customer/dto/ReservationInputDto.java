@@ -1,6 +1,7 @@
 package com.zerobase.restaurantreservationsystem.customer.dto;
 
 import com.zerobase.restaurantreservationsystem.common.entity.Reservation;
+import com.zerobase.restaurantreservationsystem.common.type.ApprovalState;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class ReservationInputDto {
                 .schedule(LocalDateTime.parse(schedule))
                 .phone(getPhone())
                 .personCount(getPersonCount())
-                .approval("PENDING")
+                .approvalState(ApprovalState.PENDING)
                 .checkedIn(false)
                 .build();
     }

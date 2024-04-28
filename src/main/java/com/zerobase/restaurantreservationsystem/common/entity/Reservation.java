@@ -1,5 +1,6 @@
 package com.zerobase.restaurantreservationsystem.common.entity;
 
+import com.zerobase.restaurantreservationsystem.common.type.ApprovalState;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,9 +18,11 @@ public class Reservation {
     long id;
     LocalDateTime schedule;
     String phone;
-    String approval;
     boolean checkedIn;
     int personCount;
+
+    @Enumerated(EnumType.STRING)
+    ApprovalState approvalState;
 
     @ManyToOne
     @JoinColumn(name = "member_id")

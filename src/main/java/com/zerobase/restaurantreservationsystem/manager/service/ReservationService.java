@@ -53,7 +53,7 @@ public class ReservationService {
         }
 
         Reservation reservation = optionalReservation.get();
-        reservation.setApproval(approval.getApproval());
+        reservation.setApprovalState(approval.getApprovalState());
         reservationRepository.save(reservation);
     }
 
