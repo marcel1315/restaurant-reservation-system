@@ -48,7 +48,7 @@ public class ReservationService {
         checkRestaurantManagerMatch(approval.getRestaurantId());
 
         Optional<Reservation> optionalReservation = reservationRepository.findById(approval.getReservationId());
-        if (!optionalReservation.isPresent()) {
+        if (optionalReservation.isEmpty()) {
             throw new ReservationNotExistException();
         }
 
@@ -59,7 +59,7 @@ public class ReservationService {
 
     private void checkRestaurantManagerMatch(long restaurantId) {
         Member manager = getManager();
-        List<Restaurant> restaurants = restaurantRepository.findByManager(manager);
+        List<Restaurant> restaurants = restaurantRepository.findByManagerAndDeleteMarker(manager, false);
         boolean found = false;
         for (Restaurant restaurant : restaurants) {
             if (restaurant.getId() == restaurantId) {
@@ -82,7 +82,7 @@ public class ReservationService {
         }
 
         Optional<Member> manager = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
-        if (!manager.isPresent()) {
+        if (manager.isEmpty()) {
             throw new MemberNotExistException();
         }
         return manager.get();

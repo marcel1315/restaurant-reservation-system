@@ -48,7 +48,7 @@ public class MemberService implements UserDetailsService {
                 loginDto.getUsername(),
                 loginDto.getRole()
         );
-        if (!optionalMember.isPresent()) {
+        if (optionalMember.isEmpty()) {
             throw new MemberNotExistException();
         }
         Member member = optionalMember.get();
@@ -77,7 +77,7 @@ public class MemberService implements UserDetailsService {
 
         Optional<Member> member = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
 
-        if (!member.isPresent()) {
+        if (member.isEmpty()) {
             throw new MemberNotExistException();
         }
 

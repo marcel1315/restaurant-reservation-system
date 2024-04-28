@@ -10,14 +10,12 @@ import java.time.LocalDateTime;
 public class ReservationInputDto {
     public long restaurantId;
     public String schedule; // ISO8601
-    public int personCount;
     public String phone;
 
     public Reservation toReservation() {
         return Reservation.builder()
                 .schedule(LocalDateTime.parse(schedule))
                 .phone(getPhone())
-                .personCount(getPersonCount())
                 .approvalState(ApprovalState.PENDING)
                 .checkedIn(false)
                 .build();

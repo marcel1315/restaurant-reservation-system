@@ -1,5 +1,6 @@
 package com.zerobase.restaurantreservationsystem.manager.service;
 
+import com.zerobase.restaurantreservationsystem.common.exception.RestaurantNotExistException;
 import com.zerobase.restaurantreservationsystem.common.type.MemberRole;
 import com.zerobase.restaurantreservationsystem.manager.dto.CreateRestaurantDto;
 import com.zerobase.restaurantreservationsystem.common.entity.Member;
@@ -35,12 +36,23 @@ public class RestaurantService {
     }
 
     public List<RestaurantDto> list() {
-        List<Restaurant> list = restaurantRepository.findByManager(getManager());
+        List<Restaurant> list = restaurantRepository.findByManagerAndDeleteMarker(getManager(), false);
         List<RestaurantDto> listDto = new ArrayList<>();
         for (Restaurant r : list) {
             listDto.add(RestaurantDto.of(r));
         }
         return listDto;
+    }
+
+    public void delete(long id) {
+        Optional<Restaurant> restaurant = restaurantRepository.findByIdAndManager(id, getManager());
+
+        if (restaurant.isEmpty()) {
+            throw new RestaurantNotExistException();
+        }
+
+        restaurant.get().setDeleteMarker(true);
+        restaurantRepository.save(restaurant.get());
     }
 
     private Member getManager() {
@@ -53,7 +65,7 @@ public class RestaurantService {
         }
 
         Optional<Member> manager = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
-        if (!manager.isPresent()) {
+        if (manager.isEmpty()) {
             throw new MemberNotExistException();
         }
         return manager.get();

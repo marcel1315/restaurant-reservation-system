@@ -28,4 +28,6 @@ public class Restaurant {
     @ManyToOne
     @JoinColumn(name = "manager_id")
     Member manager;
+
+    boolean deleteMarker;
 }

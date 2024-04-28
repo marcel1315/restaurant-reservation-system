@@ -19,7 +19,6 @@ public class Reservation {
     LocalDateTime schedule;
     String phone;
     boolean checkedIn;
-    int personCount;
 
     @Enumerated(EnumType.STRING)
     ApprovalState approvalState;

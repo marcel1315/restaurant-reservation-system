@@ -48,7 +48,7 @@ public class ReservationService {
 
     private Restaurant getRestaurant(long id) {
         Optional<Restaurant> restaurant = restaurantRepository.findById(id);
-        if (!restaurant.isPresent()) {
+        if (restaurant.isEmpty()) {
             throw new RestaurantNotExistException();
         }
         return restaurant.get();
@@ -64,7 +64,7 @@ public class ReservationService {
         }
 
         Optional<Member> manager = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
-        if (!manager.isPresent()) {
+        if (manager.isEmpty()) {
             throw new MemberNotExistException();
         }
         return manager.get();
