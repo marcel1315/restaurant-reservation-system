@@ -78,7 +78,7 @@ public class MemberService implements UserDetailsService {
         Optional<Member> member = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
 
         if (member.isEmpty()) {
-            throw new MemberNotExistException();
+            throw new MemberNotExistException(username, role);
         }
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
