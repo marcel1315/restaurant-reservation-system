@@ -26,6 +26,10 @@ public class Shop {
     List<Reservation> reservations;
 
     @ManyToOne
+    @JoinColumn(name = "review_id")
+    Review review;
+
+    @ManyToOne
     @JoinColumn(name = "manager_id")
     Member manager;
 

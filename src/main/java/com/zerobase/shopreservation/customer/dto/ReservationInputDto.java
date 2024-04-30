@@ -17,7 +17,7 @@ public class ReservationInputDto {
                 .schedule(LocalDateTime.parse(schedule))
                 .phone(getPhone())
                 .approvalState(ApprovalState.PENDING)
-                .checkedIn(false)
+                .checkInAt(null)
                 .build();
     }
 }

@@ -18,7 +18,7 @@ public class Reservation {
     long id;
     LocalDateTime schedule;
     String phone;
-    boolean checkedIn;
+    LocalDateTime checkInAt;
 
     @Enumerated(EnumType.STRING)
     ApprovalState approvalState;

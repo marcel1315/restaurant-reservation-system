@@ -1,6 +1,7 @@
 package com.zerobase.shopreservation.customer.service;
 
 import com.zerobase.shopreservation.common.type.MemberRole;
+import com.zerobase.shopreservation.customer.dto.CheckInDto;
 import com.zerobase.shopreservation.customer.dto.ReservationInputDto;
 import com.zerobase.shopreservation.customer.dto.ReservationOutputDto;
 import com.zerobase.shopreservation.customer.repository.ReservationRepository;
@@ -11,6 +12,7 @@ import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.MemberNotExistException;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
+import com.zerobase.shopreservation.manager.exception.ReservationNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,6 +54,22 @@ public class ReservationService {
             throw new ShopNotExistException();
         }
         return shop.get();
+    }
+
+    public long checkIn(CheckInDto checkInDto) {
+        Optional<Reservation> optionalReservation = reservationRepository.findByIdAndMember(
+                checkInDto.getReservationId(),
+                getCustomer()
+        );
+
+        if (optionalReservation.isEmpty()) {
+            throw new ReservationNotExistException();
+        }
+
+        optionalReservation.get().setCheckInAt(checkInDto.getCheckInTime());
+        Reservation reservation = reservationRepository.save(optionalReservation.get());
+
+        return reservation.getId();
     }
 
     private Member getCustomer() {

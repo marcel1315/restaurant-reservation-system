@@ -1,7 +1,16 @@
 package com.zerobase.shopreservation.common.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
 @Entity
 public class Review {
     @Id
@@ -10,7 +19,7 @@ public class Review {
     int rate;
     String contents;
 
-    @ManyToOne
-    @JoinColumn(name = "shop_id")
-    Shop shop;
+    @OneToOne
+    @JoinColumn(name = "reservation_id")
+    Reservation reservation;
 }

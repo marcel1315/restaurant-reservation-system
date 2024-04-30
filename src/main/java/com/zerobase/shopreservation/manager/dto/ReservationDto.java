@@ -13,14 +13,14 @@ public class ReservationDto {
     LocalDateTime schedule;
     String phone;
     ApprovalState approvalState;
-    boolean checkedIn;
+    LocalDateTime checkInAt;
 
     public static ReservationDto of(Reservation reservation) {
         return ReservationDto.builder()
                 .schedule(reservation.getSchedule())
                 .phone(reservation.getPhone())
                 .approvalState(reservation.getApprovalState())
-                .checkedIn(reservation.isCheckedIn())
+                .checkInAt(reservation.getCheckInAt())
                 .build();
     }
 }
