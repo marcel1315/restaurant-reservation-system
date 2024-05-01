@@ -5,9 +5,9 @@ import com.zerobase.shopreservation.manager.dto.ReservationDto;
 import com.zerobase.shopreservation.manager.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController("managerReservationController")
@@ -23,8 +23,8 @@ public class ReservationController {
     }
 
     @PostMapping("/manager/reservations")
-    public ResponseEntity<?> updateApproval(@RequestBody ReservationApprovalDto approval) {
+    public ResponseEntity<?> updateApproval(@Validated @RequestBody ReservationApprovalDto approval) {
         reservationService.updateApproval(approval);
-        return ResponseEntity.ok(Collections.singletonMap("success", true));
+        return ResponseEntity.ok(null);
     }
 }

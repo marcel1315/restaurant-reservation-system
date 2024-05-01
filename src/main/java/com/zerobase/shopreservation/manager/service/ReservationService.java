@@ -19,13 +19,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Service
+@Service("managerReservationService")
 @RequiredArgsConstructor
 public class ReservationService extends BaseService {
 
     private final ReservationRepository reservationRepository;
     private final ShopRepository shopRepository;
 
+    /**
+     * 예약 목록 나열
+     * manager가 자신의 shop에 있는 예약을 조회함
+     */
     public List<ReservationDto> list(long shopId) {
         checkShopManagerMatch(shopId);
 
@@ -37,6 +41,10 @@ public class ReservationService extends BaseService {
         return reservationDtos;
     }
 
+    /**
+     * 상점 예약을 승인/거절함
+     * manager가 자신의 shop에 대한 예약에만 승인/거절을 할 수 있음
+     */
     public void updateApproval(ReservationApprovalDto approval) {
         checkShopManagerMatch(approval.getShopId());
 
@@ -50,6 +58,10 @@ public class ReservationService extends BaseService {
         reservationRepository.save(reservation);
     }
 
+    /**
+     * 로그인된 manager가 소유한 shop인지 확인
+     * 아닌 경우, ShopManagerNotMatchException
+     */
     private void checkShopManagerMatch(long shopId) {
         Member manager = getManager();
         List<Shop> shops = shopRepository.findByManagerAndDeleteMarker(manager, false);

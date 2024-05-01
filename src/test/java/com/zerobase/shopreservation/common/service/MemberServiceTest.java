@@ -42,7 +42,7 @@ class MemberServiceTest {
     private MemberService memberService;
 
     @Test
-    @DisplayName("회원가입 성공")
+    @DisplayName("회원가입 - 성공")
     void signup() {
         //given
         SignupDto dto = SignupDto.builder()
@@ -60,7 +60,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("회원가입 - 패스워드 암호화 저장")
+    @DisplayName("회원가입 - 성공(패스워드 암호화 저장)")
     void signup_encrypt_password() {
         //given
         String password = "1234";
@@ -75,8 +75,8 @@ class MemberServiceTest {
                 .willReturn("somehashedvalue");
 
         //when
-        memberService.signup(dto);
         ArgumentCaptor<Member> captor = ArgumentCaptor.forClass(Member.class);
+        memberService.signup(dto);
 
         //then
         verify(memberRepository).save(captor.capture());
@@ -86,7 +86,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("회원가입 중복 시도 - 방지")
+    @DisplayName("회원가입 - 실패(같은 이메일로 시도)")
     void signup_twice() {
         //given
         SignupDto dto = SignupDto.builder()
@@ -106,7 +106,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("로그인 성공")
+    @DisplayName("로그인 - 성공")
     void login() {
         //given
         LoginDto dto = LoginDto.builder()
@@ -125,7 +125,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("로그인 실패 - 회원정보가 없음")
+    @DisplayName("로그인 - 실패(회원정보가 없음)")
     void login_fail_not_member() {
         //given
         LoginDto dto = LoginDto.builder()
@@ -144,7 +144,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("로그인 실패 - 비밀번호 틀림")
+    @DisplayName("로그인 - 실패(비밀번호 틀림)")
     void login_fail_wrong_password() {
         //given
         LoginDto dto = LoginDto.builder()
@@ -167,7 +167,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("토큰으로 사용자 검증 성공")
+    @DisplayName("토큰으로 사용자 검증 - 성공")
     void load_user_by_token() {
         //given
         String email = "abc@gmail.com";
@@ -191,7 +191,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("토큰으로 사용자 검증 실패 - 인자의 포맷이 다를 때")
+    @DisplayName("토큰으로 사용자 검증 - 실패(인자의 포맷이 다를 때)")
     void load_user_by_token_fail_invalid_format() {
         //given
         String[] failCases = {
@@ -227,7 +227,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("토큰으로 사용자 검증 실패 - 사용자가 없을 때")
+    @DisplayName("토큰으로 사용자 검증 - 실패(사용자가 존재하지 않을 때)")
     void load_user_by_token_fail_member_doesnt_exist() {
         //given
         String usernameAndRole = "abc@email.com ROLE_CUSTOMER";

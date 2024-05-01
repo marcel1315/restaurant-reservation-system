@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class ReservationDto {
+    long id;
     LocalDateTime schedule;
     String phone;
     ApprovalState approvalState;
@@ -17,6 +18,7 @@ public class ReservationDto {
 
     public static ReservationDto of(Reservation reservation) {
         return ReservationDto.builder()
+                .id(reservation.getId())
                 .schedule(reservation.getSchedule())
                 .phone(reservation.getPhone())
                 .approvalState(reservation.getApprovalState())

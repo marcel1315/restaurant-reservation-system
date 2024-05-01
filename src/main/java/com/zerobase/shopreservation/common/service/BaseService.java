@@ -14,8 +14,12 @@ import java.util.Optional;
 
 public class BaseService {
 
-    @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    public void setMemberRepository(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     public Member getCustomer() {
         Member m = getMember();
