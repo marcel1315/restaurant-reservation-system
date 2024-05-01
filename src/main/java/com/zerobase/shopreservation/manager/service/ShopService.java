@@ -4,7 +4,7 @@ import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
 import com.zerobase.shopreservation.manager.dto.CreateShopDto;
-import com.zerobase.shopreservation.manager.dto.ShopDto;
+import com.zerobase.shopreservation.manager.dto.ShopOutputDto;
 import com.zerobase.shopreservation.manager.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,11 +36,11 @@ public class ShopService extends BaseService {
      * 상점 목록을 봄
      * manager가 자신의 상점 목록을 봄. 다른 manager의 상점 목록을 보여주진 않음
      */
-    public List<ShopDto> list() {
+    public List<ShopOutputDto> list() {
         List<Shop> list = shopRepository.findByManagerAndDeleteMarker(getManager(), false);
-        List<ShopDto> listDto = new ArrayList<>();
+        List<ShopOutputDto> listDto = new ArrayList<>();
         for (Shop r : list) {
-            listDto.add(ShopDto.of(r));
+            listDto.add(ShopOutputDto.of(r));
         }
         return listDto;
     }

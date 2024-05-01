@@ -3,7 +3,7 @@ package com.zerobase.shopreservation.customer.service;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
-import com.zerobase.shopreservation.customer.dto.ShopDto;
+import com.zerobase.shopreservation.customer.dto.ShopOutputDto;
 import com.zerobase.shopreservation.customer.dto.ShopSearchDto;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class ShopService extends BaseService {
      * 상점을 검색함
      * ShopSearchDto에 name, address 모두 없다면, 전체를 검색함
      */
-    public List<ShopDto> search(ShopSearchDto shopSearchDto) {
+    public List<ShopOutputDto> search(ShopSearchDto shopSearchDto) {
         List<Shop> list;
         String name = shopSearchDto.getName();
         String address = shopSearchDto.getAddress();
@@ -38,9 +38,9 @@ public class ShopService extends BaseService {
             list = shopRepository.findByDeleteMarker(false);
         }
 
-        List<ShopDto> listDto = new ArrayList<>();
+        List<ShopOutputDto> listDto = new ArrayList<>();
         for (Shop r : list) {
-            listDto.add(ShopDto.of(r));
+            listDto.add(ShopOutputDto.of(r));
         }
         return listDto;
     }
@@ -48,11 +48,11 @@ public class ShopService extends BaseService {
     /**
      * 상점 하나를 검색함
      */
-    public ShopDto detail(long id) {
+    public ShopOutputDto detail(long id) {
         Optional<Shop> shop = shopRepository.findById(id);
         if (shop.isEmpty()) {
             throw new ShopNotExistException();
         }
-        return ShopDto.of(shop.get());
+        return ShopOutputDto.of(shop.get());
     }
 }

@@ -1,12 +1,12 @@
 package com.zerobase.shopreservation.manager.service;
 
+import com.zerobase.shopreservation.common.dto.ReservationOutputDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Shop;
+import com.zerobase.shopreservation.common.exception.ReservationNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
 import com.zerobase.shopreservation.manager.dto.ReservationApprovalDto;
-import com.zerobase.shopreservation.manager.dto.ReservationDto;
-import com.zerobase.shopreservation.manager.exception.ReservationNotExistException;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
 import com.zerobase.shopreservation.manager.repository.ReservationRepository;
 import com.zerobase.shopreservation.manager.repository.ShopRepository;
@@ -30,15 +30,15 @@ public class ReservationService extends BaseService {
      * 예약 목록 나열
      * manager가 자신의 shop에 있는 예약을 조회함
      */
-    public List<ReservationDto> list(long shopId) {
+    public List<ReservationOutputDto> list(long shopId) {
         checkShopManagerMatch(shopId);
 
         List<Reservation> reservations = reservationRepository.findAllByShopId(shopId);
-        List<ReservationDto> reservationDtos = new ArrayList<>();
+        List<ReservationOutputDto> reservationOutputDtos = new ArrayList<>();
         for (Reservation r : reservations) {
-            reservationDtos.add(ReservationDto.of(r));
+            reservationOutputDtos.add(ReservationOutputDto.of(r));
         }
-        return reservationDtos;
+        return reservationOutputDtos;
     }
 
     /**

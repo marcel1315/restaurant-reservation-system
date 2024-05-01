@@ -1,6 +1,6 @@
 package com.zerobase.shopreservation.customer.controller;
 
-import com.zerobase.shopreservation.customer.dto.ShopDto;
+import com.zerobase.shopreservation.customer.dto.ShopOutputDto;
 import com.zerobase.shopreservation.customer.dto.ShopSearchDto;
 import com.zerobase.shopreservation.customer.service.ShopService;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +20,13 @@ public class ShopController {
 
     @GetMapping("/customer/shops/{id}")
     public ResponseEntity<?> detail(@PathVariable long id) {
-        ShopDto shopDto = shopService.detail(id);
-        return ResponseEntity.ok(shopDto);
+        ShopOutputDto shopOutputDto = shopService.detail(id);
+        return ResponseEntity.ok(shopOutputDto);
     }
 
     @GetMapping("/customer/shops")
     public ResponseEntity<?> search(@ModelAttribute ShopSearchDto shopSearchDto) {
-        List<ShopDto> list = shopService.search(shopSearchDto);
+        List<ShopOutputDto> list = shopService.search(shopSearchDto);
         return ResponseEntity.ok(list);
     }
 }

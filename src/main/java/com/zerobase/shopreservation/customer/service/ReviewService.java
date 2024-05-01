@@ -2,12 +2,12 @@ package com.zerobase.shopreservation.customer.service;
 
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Review;
+import com.zerobase.shopreservation.common.exception.ReservationNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
 import com.zerobase.shopreservation.customer.dto.ReviewDto;
 import com.zerobase.shopreservation.customer.exception.AlreadyDidReviewException;
 import com.zerobase.shopreservation.customer.repository.ReservationRepository;
 import com.zerobase.shopreservation.customer.repository.ReviewRepository;
-import com.zerobase.shopreservation.manager.exception.ReservationNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

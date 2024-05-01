@@ -1,14 +1,14 @@
 package com.zerobase.shopreservation.manager.service;
 
+import com.zerobase.shopreservation.common.dto.ReservationOutputDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Shop;
+import com.zerobase.shopreservation.common.exception.ReservationNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.ApprovalState;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import com.zerobase.shopreservation.manager.dto.ReservationApprovalDto;
-import com.zerobase.shopreservation.manager.dto.ReservationDto;
-import com.zerobase.shopreservation.manager.exception.ReservationNotExistException;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
 import com.zerobase.shopreservation.manager.repository.ReservationRepository;
 import com.zerobase.shopreservation.manager.repository.ShopRepository;
@@ -40,6 +40,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Manager ReservationService Test")
 class ReservationServiceTest {
 
     @Mock
@@ -109,7 +110,7 @@ class ReservationServiceTest {
                 );
 
         //when
-        List<ReservationDto> list = reservationService.list(1L);
+        List<ReservationOutputDto> list = reservationService.list(1L);
 
         //then
         assertEquals(2, list.size());

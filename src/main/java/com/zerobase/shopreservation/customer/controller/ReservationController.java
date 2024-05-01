@@ -1,12 +1,13 @@
 package com.zerobase.shopreservation.customer.controller;
 
+import com.zerobase.shopreservation.common.dto.ReservationOutputDto;
 import com.zerobase.shopreservation.customer.dto.CheckInDto;
 import com.zerobase.shopreservation.customer.dto.ReservationInputDto;
-import com.zerobase.shopreservation.customer.dto.ReservationOutputDto;
 import com.zerobase.shopreservation.customer.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,9 +25,9 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping("/customer/reservations")
-    public ResponseEntity<?> reserve(@RequestBody ReservationInputDto reservationInputDto) {
-        reservationService.reserve(reservationInputDto);
-        return ResponseEntity.ok(Collections.singletonMap("success", true));
+    public ResponseEntity<?> reserve(@Validated @RequestBody ReservationInputDto reservationInputDto) {
+        long reservationId = reservationService.reserve(reservationInputDto);
+        return ResponseEntity.ok(Collections.singletonMap("reservationId", reservationId));
     }
 
     @GetMapping("/customer/reservations")

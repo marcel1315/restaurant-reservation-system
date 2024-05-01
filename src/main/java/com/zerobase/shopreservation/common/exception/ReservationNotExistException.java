@@ -1,6 +1,5 @@
-package com.zerobase.shopreservation.manager.exception;
+package com.zerobase.shopreservation.common.exception;
 
-import com.zerobase.shopreservation.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 
 public class ReservationNotExistException extends CustomException {

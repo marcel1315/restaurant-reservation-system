@@ -1,7 +1,7 @@
 package com.zerobase.shopreservation.manager.controller;
 
+import com.zerobase.shopreservation.common.dto.ReservationOutputDto;
 import com.zerobase.shopreservation.manager.dto.ReservationApprovalDto;
-import com.zerobase.shopreservation.manager.dto.ReservationDto;
 import com.zerobase.shopreservation.manager.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class ReservationController {
 
     @GetMapping("/manager/reservations")
     public ResponseEntity<?> list(@RequestParam Long shopId) {
-        List<ReservationDto> list = reservationService.list(shopId);
+        List<ReservationOutputDto> list = reservationService.list(shopId);
         return ResponseEntity.ok(list);
     }
 

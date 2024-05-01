@@ -6,7 +6,7 @@ import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import com.zerobase.shopreservation.manager.dto.CreateShopDto;
-import com.zerobase.shopreservation.manager.dto.ShopDto;
+import com.zerobase.shopreservation.manager.dto.ShopOutputDto;
 import com.zerobase.shopreservation.manager.repository.ShopRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,7 +105,7 @@ class ShopServiceTest {
                 .willReturn(shops);
 
         //when
-        List<ShopDto> listDtos = shopService.list();
+        List<ShopOutputDto> listDtos = shopService.list();
 
         //then
         assertEquals("본죽", listDtos.stream().findFirst().get().getName());

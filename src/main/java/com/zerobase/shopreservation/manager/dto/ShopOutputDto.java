@@ -6,15 +6,15 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ShopDto {
+public class ShopOutputDto {
     String name;
     String description;
     String address;
     String latitude;
     String longitude;
 
-    public static ShopDto of(Shop shop) {
-        return ShopDto.builder()
+    public static ShopOutputDto of(Shop shop) {
+        return ShopOutputDto.builder()
                 .name(shop.getName())
                 .description(shop.getDescription())
                 .address(shop.getAddress())

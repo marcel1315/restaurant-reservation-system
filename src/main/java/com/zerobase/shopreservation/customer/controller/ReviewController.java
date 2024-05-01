@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-
 @RestController("customerReviewController")
 @RequiredArgsConstructor
 public class ReviewController {
@@ -19,6 +17,6 @@ public class ReviewController {
     @PostMapping("/customer/review")
     public ResponseEntity<?> review(@RequestBody ReviewDto reviewDto) {
         reviewService.review(reviewDto);
-        return ResponseEntity.ok(Collections.singletonMap("success", true));
+        return ResponseEntity.ok(null);
     }
 }

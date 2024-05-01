@@ -21,6 +21,11 @@ public class Shop {
     String latitude;
     String longitude;
 
+    String operationStartTimeWeekend;
+    String operationEndTimeWeekend;
+    String operationStartTimeWeekday;
+    String operationEndTimeWeekday;
+
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     @ToString.Exclude
     List<Reservation> reservations;

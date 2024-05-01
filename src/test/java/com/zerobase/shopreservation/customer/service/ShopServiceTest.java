@@ -3,7 +3,7 @@ package com.zerobase.shopreservation.customer.service;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
-import com.zerobase.shopreservation.customer.dto.ShopDto;
+import com.zerobase.shopreservation.customer.dto.ShopOutputDto;
 import com.zerobase.shopreservation.customer.dto.ShopSearchDto;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -105,7 +105,7 @@ class ShopServiceTest {
                 ));
 
         //when
-        ShopDto detail = shopService.detail(1L);
+        ShopOutputDto detail = shopService.detail(1L);
 
         //then
         assertEquals(1L, detail.getId());

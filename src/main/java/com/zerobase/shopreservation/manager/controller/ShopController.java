@@ -1,7 +1,7 @@
 package com.zerobase.shopreservation.manager.controller;
 
 import com.zerobase.shopreservation.manager.dto.CreateShopDto;
-import com.zerobase.shopreservation.manager.dto.ShopDto;
+import com.zerobase.shopreservation.manager.dto.ShopOutputDto;
 import com.zerobase.shopreservation.manager.service.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class ShopController {
 
     @GetMapping("/manager/shops")
     public ResponseEntity<?> list() {
-        List<ShopDto> list = shopService.list();
+        List<ShopOutputDto> list = shopService.list();
         return ResponseEntity.ok(list);
     }
 
