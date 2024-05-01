@@ -3,10 +3,7 @@ package com.zerobase.shopreservation.manager.service;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Shop;
-import com.zerobase.shopreservation.common.exception.MemberNotExistException;
-import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.service.BaseService;
-import com.zerobase.shopreservation.common.type.MemberRole;
 import com.zerobase.shopreservation.manager.dto.ReservationApprovalDto;
 import com.zerobase.shopreservation.manager.dto.ReservationDto;
 import com.zerobase.shopreservation.manager.exception.ReservationNotExistException;
@@ -15,12 +12,9 @@ import com.zerobase.shopreservation.manager.repository.ReservationRepository;
 import com.zerobase.shopreservation.manager.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

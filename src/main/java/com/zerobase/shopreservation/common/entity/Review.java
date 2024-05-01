@@ -3,9 +3,6 @@ package com.zerobase.shopreservation.common.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
