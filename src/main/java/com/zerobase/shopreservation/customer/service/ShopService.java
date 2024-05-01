@@ -2,6 +2,7 @@ package com.zerobase.shopreservation.customer.service;
 
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
+import com.zerobase.shopreservation.common.service.BaseService;
 import com.zerobase.shopreservation.customer.dto.ShopDto;
 import com.zerobase.shopreservation.customer.dto.ShopSearchDto;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @Service("customerShopService")
 @RequiredArgsConstructor
-public class ShopService {
+public class ShopService extends BaseService {
 
     final private ShopRepository shopRepository;
 

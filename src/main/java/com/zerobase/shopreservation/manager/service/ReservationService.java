@@ -5,6 +5,7 @@ import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.MemberNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
+import com.zerobase.shopreservation.common.service.BaseService;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import com.zerobase.shopreservation.manager.dto.ReservationApprovalDto;
 import com.zerobase.shopreservation.manager.dto.ReservationDto;
@@ -26,10 +27,9 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReservationService {
+public class ReservationService extends BaseService {
 
     private final ReservationRepository reservationRepository;
-    private final MemberRepository memberRepository;
     private final ShopRepository shopRepository;
 
     public List<ReservationDto> list(long shopId) {
@@ -69,21 +69,5 @@ public class ReservationService {
         if (!found) {
             throw new ShopManagerNotMatchException();
         }
-    }
-
-    private Member getManager() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String role = "";
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        for (GrantedAuthority authority : authorities) {
-            role = authority.getAuthority();
-            break;
-        }
-
-        Optional<Member> manager = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
-        if (manager.isEmpty()) {
-            throw new MemberNotExistException();
-        }
-        return manager.get();
     }
 }

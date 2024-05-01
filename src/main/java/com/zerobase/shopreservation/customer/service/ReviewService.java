@@ -1,31 +1,24 @@
 package com.zerobase.shopreservation.customer.service;
 
-import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Review;
-import com.zerobase.shopreservation.common.exception.MemberNotExistException;
-import com.zerobase.shopreservation.common.repository.MemberRepository;
-import com.zerobase.shopreservation.common.type.MemberRole;
+import com.zerobase.shopreservation.common.service.BaseService;
 import com.zerobase.shopreservation.customer.dto.ReviewDto;
 import com.zerobase.shopreservation.customer.exception.AlreadyDidReviewException;
 import com.zerobase.shopreservation.customer.repository.ReservationRepository;
 import com.zerobase.shopreservation.customer.repository.ReviewRepository;
 import com.zerobase.shopreservation.manager.exception.ReservationNotExistException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewService {
+public class ReviewService extends BaseService {
 
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
-    private final MemberRepository memberRepository;
 
     public void review(ReviewDto reviewDto) {
         Optional<Reservation> optionalReservation = reservationRepository.findByIdAndMember(
@@ -51,21 +44,5 @@ public class ReviewService {
                 .build();
 
         reviewRepository.save(review);
-    }
-
-    private Member getCustomer() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String role = "";
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        for (GrantedAuthority authority : authorities) {
-            role = authority.getAuthority();
-            break;
-        }
-
-        Optional<Member> customer = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
-        if (customer.isEmpty()) {
-            throw new MemberNotExistException();
-        }
-        return customer.get();
     }
 }
