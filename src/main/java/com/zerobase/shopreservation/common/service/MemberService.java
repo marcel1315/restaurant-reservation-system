@@ -11,13 +11,18 @@ import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +33,14 @@ import java.util.Optional;
 @Service
 public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public boolean signup(SignupDto signupDto) {
+    /**
+     * 회원가입
+     * signupDto.getRole을 통해 customer인지 manager인지 구분함
+     */
+    @Transactional
+    public void signup(SignupDto signupDto) {
         if (memberRepository.existsByEmailAndRole(
                 signupDto.getEmail(),
                 signupDto.getRole()
@@ -38,28 +49,37 @@ public class MemberService implements UserDetailsService {
         }
 
         Member member = signupDto.toMember();
-        memberRepository.save(member);
+        String encPassword = passwordEncoder.encode(signupDto.getPassword());
+        member.setPassword(encPassword);
 
-        return true;
+        memberRepository.save(member);
     }
 
-    public boolean login(LoginDto loginDto) {
+    /**
+     * 로그인
+     * LoginDto.getRole을 통해 customer인지 manager인지 구분함
+     */
+    public void login(LoginDto loginDto) {
         Optional<Member> optionalMember = memberRepository.findByEmailAndRole(
-                loginDto.getUsername(),
+                loginDto.getEmail(),
                 loginDto.getRole()
         );
         if (optionalMember.isEmpty()) {
             throw new MemberNotExistException();
         }
         Member member = optionalMember.get();
-
-        if (!member.getPassword().equals(loginDto.getPassword())) {
+        if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
             throw new IncorrectPasswordException();
         }
-
-        return true;
     }
 
+    /**
+     * 토큰으로 사용자를 확인할 때 사용됨
+     * Spring security의 UserDetailsService의 메서드를 구현함
+     * username과 role을 동시에 인자로 받아 특정 User(Member)를 인식함 -> 같은 이메일의 customer와 manager 이메일 생성이 가능함
+     * username과 role을 공백문자로 합친 값을 usernameAndRole로 넣어줘야 함.
+     * e.g., "abc@gmail.com ROLE_CUSTOMER"
+     */
     @Override
     public UserDetails loadUserByUsername(String usernameAndRole) throws UsernameNotFoundException {
         String[] contents = usernameAndRole.split(" ");
@@ -67,14 +87,13 @@ public class MemberService implements UserDetailsService {
             throw new InvalidUsernameAndRoleFormat();
         }
         try {
-            MemberRole role = MemberRole.valueOf(contents[1]);
+            MemberRole.valueOf(contents[1]);
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
             throw new InvalidUsernameAndRoleFormat();
         }
         String username = contents[0];
         String role = contents[1];
-
         Optional<Member> member = memberRepository.findByEmailAndRole(username, MemberRole.valueOf(role));
 
         if (member.isEmpty()) {
@@ -82,7 +101,6 @@ public class MemberService implements UserDetailsService {
         }
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-
         grantedAuthorities.add(new SimpleGrantedAuthority(role));
 
         return new User(username, member.get().getPassword(), grantedAuthorities);
