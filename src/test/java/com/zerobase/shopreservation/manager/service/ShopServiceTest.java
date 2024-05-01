@@ -31,6 +31,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Manager ShopService Test")
 class ShopServiceTest {
 
     @Mock

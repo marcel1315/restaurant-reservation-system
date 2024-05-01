@@ -18,19 +18,13 @@ public class ShopController {
 
     private final ShopService shopService;
 
-    @GetMapping("/customer/shops")
-    public ResponseEntity<?> list() {
-        List<ShopDto> list = shopService.list();
-        return ResponseEntity.ok(list);
-    }
-
     @GetMapping("/customer/shops/{id}")
     public ResponseEntity<?> detail(@PathVariable long id) {
         ShopDto shopDto = shopService.detail(id);
         return ResponseEntity.ok(shopDto);
     }
 
-    @GetMapping("/customer/shops/search")
+    @GetMapping("/customer/shops")
     public ResponseEntity<?> search(@ModelAttribute ShopSearchDto shopSearchDto) {
         List<ShopDto> list = shopService.search(shopSearchDto);
         return ResponseEntity.ok(list);

@@ -19,15 +19,10 @@ public class ShopService extends BaseService {
 
     final private ShopRepository shopRepository;
 
-    public List<ShopDto> list() {
-        List<Shop> list = shopRepository.findByDeleteMarker(false);
-        List<ShopDto> listDto = new ArrayList<>();
-        for (Shop r : list) {
-            listDto.add(ShopDto.of(r));
-        }
-        return listDto;
-    }
-
+    /**
+     * 상점을 검색함
+     * ShopSearchDto에 name, address 모두 없다면, 전체를 검색함
+     */
     public List<ShopDto> search(ShopSearchDto shopSearchDto) {
         List<Shop> list;
         String name = shopSearchDto.getName();
@@ -50,6 +45,9 @@ public class ShopService extends BaseService {
         return listDto;
     }
 
+    /**
+     * 상점 하나를 검색함
+     */
     public ShopDto detail(long id) {
         Optional<Shop> shop = shopRepository.findById(id);
         if (shop.isEmpty()) {
