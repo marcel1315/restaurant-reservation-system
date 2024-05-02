@@ -3,17 +3,15 @@ package com.zerobase.shopreservation.customer.controller;
 import com.zerobase.shopreservation.common.dto.ReservationOutputDto;
 import com.zerobase.shopreservation.customer.dto.CheckInDto;
 import com.zerobase.shopreservation.customer.dto.ReservationInputDto;
+import com.zerobase.shopreservation.customer.dto.ReservationTimeTableInputDto;
+import com.zerobase.shopreservation.customer.dto.ReservationTimeTableOutputDto;
 import com.zerobase.shopreservation.customer.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,6 +21,12 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService reservationService;
+
+    @GetMapping("/customer/reservations/timetable")
+    public ResponseEntity<ReservationTimeTableOutputDto> timetable(@Validated @ModelAttribute ReservationTimeTableInputDto dto) {
+        ReservationTimeTableOutputDto timeTable = reservationService.getReservationTimeTable(dto);
+        return ResponseEntity.ok(timeTable);
+    }
 
     @PostMapping("/customer/reservations")
     public ResponseEntity<?> reserve(@Validated @RequestBody ReservationInputDto reservationInputDto) {
@@ -38,11 +42,6 @@ public class ReservationController {
 
     @PostMapping("/customer/reservations/checkin")
     public ResponseEntity<?> checkIn(@RequestBody CheckInDto checkInDto) {
-        if (checkInDto.getCheckInTime() == null) {
-            checkInDto.setCheckInTime(LocalDateTime.now());
-        }
-        // 체크인 할 수 있는 상태인지 체크 (= 예약시간 10분전이 지났는지 체크)
-
         long reservationId = reservationService.checkIn(checkInDto);
         return ResponseEntity.ok(Collections.singletonMap("reservationId", reservationId));
     }

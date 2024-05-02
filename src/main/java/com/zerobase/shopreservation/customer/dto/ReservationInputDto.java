@@ -2,7 +2,6 @@ package com.zerobase.shopreservation.customer.dto;
 
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.type.ApprovalState;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
@@ -19,7 +18,6 @@ public class ReservationInputDto {
 
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @Future(message = "The schedule must be in the future.")
     public LocalDateTime schedule;
 
     @NotNull

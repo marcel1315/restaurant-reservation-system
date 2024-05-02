@@ -2,6 +2,7 @@ package com.zerobase.shopreservation.manager.controller;
 
 import com.zerobase.shopreservation.manager.dto.CreateShopDto;
 import com.zerobase.shopreservation.manager.dto.ShopOutputDto;
+import com.zerobase.shopreservation.manager.dto.UpdateShopDto;
 import com.zerobase.shopreservation.manager.service.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,12 @@ public class ShopController {
     @PostMapping("/manager/shops")
     public ResponseEntity<?> create(@Validated @RequestBody CreateShopDto createShopDto) {
         shopService.create(createShopDto);
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/manager/shops/{id}")
+    public ResponseEntity<?> update(@Validated @RequestBody UpdateShopDto updateShopDto, @PathVariable long id) {
+        shopService.update(id, updateShopDto);
         return ResponseEntity.ok(null);
     }
 

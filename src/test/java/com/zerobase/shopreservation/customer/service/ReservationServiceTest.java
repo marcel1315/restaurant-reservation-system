@@ -8,6 +8,8 @@ import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import com.zerobase.shopreservation.customer.dto.ReservationInputDto;
+import com.zerobase.shopreservation.customer.dto.ReservationTimeTableInputDto;
+import com.zerobase.shopreservation.customer.dto.ReservationTimeTableOutputDto;
 import com.zerobase.shopreservation.customer.exception.CantReservePastTimeException;
 import com.zerobase.shopreservation.customer.repository.ReservationRepository;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
@@ -26,7 +28,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -83,6 +87,43 @@ class ReservationServiceTest {
     @AfterEach
     public void clearSecurityContext() {
         SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    @DisplayName("예약 가능 시간 보기")
+    void reservation_timetable() {
+        //given
+        when(shopRepository.findById(anyLong()))
+                .thenReturn(Optional.of(Shop.builder()
+                        .reservationStartTimeWeekday(LocalTime.of(13, 00))
+                        .reservationFinalTimeWeekday(LocalTime.of(22, 00))
+                        .reservationStartTimeWeekend(LocalTime.of(16, 00))
+                        .reservationFinalTimeWeekend(LocalTime.of(23, 00))
+                        .reservationIntervalMinute(30)
+                        .build()
+                ));
+        ReservationTimeTableInputDto dto1 = ReservationTimeTableInputDto.builder()
+                .shopId(1)
+                .date(LocalDate.of(2024, 5, 1)) // 2024-05-01은 수요일임
+                .build();
+
+        ReservationTimeTableInputDto dto2 = ReservationTimeTableInputDto.builder()
+                .shopId(1)
+                .date(LocalDate.of(2024, 5, 4)) // 2024-05-04은 토요일임
+                .build();
+
+        //when
+        ReservationTimeTableOutputDto timeTable1 = reservationService.getReservationTimeTable(dto1);
+        ReservationTimeTableOutputDto timeTable2 = reservationService.getReservationTimeTable(dto2);
+
+        //then
+        assertEquals(LocalDate.of(2024, 5, 1), timeTable1.getDate());
+        assertEquals(LocalTime.of(13, 00), timeTable1.getTimes().stream().findFirst().get());
+        assertEquals(19, timeTable1.getTimes().size());
+
+        assertEquals(LocalDate.of(2024, 5, 4), timeTable2.getDate());
+        assertEquals(LocalTime.of(16, 00), timeTable2.getTimes().stream().findFirst().get());
+        assertEquals(15, timeTable2.getTimes().size());
     }
 
     @Test

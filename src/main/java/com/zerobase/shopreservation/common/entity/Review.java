@@ -19,4 +19,8 @@ public class Review {
     @OneToOne
     @JoinColumn(name = "reservation_id")
     Reservation reservation;
+
+    @ManyToOne
+    @JoinColumn(name = "shop_id")
+    Shop shop;
 }
