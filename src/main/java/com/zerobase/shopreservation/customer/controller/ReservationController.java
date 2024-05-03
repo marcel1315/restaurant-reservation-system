@@ -48,7 +48,7 @@ public class ReservationController {
     }
 
     @PostMapping("/customer/reservations/checkin")
-    public ResponseEntity<?> checkIn(@RequestBody CheckInDto checkInDto) {
+    public ResponseEntity<?> checkIn(@Validated @RequestBody CheckInDto checkInDto) {
         long reservationId = reservationService.checkIn(checkInDto);
         return ResponseEntity.ok(Collections.singletonMap("reservationId", reservationId));
     }

@@ -6,7 +6,9 @@ import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
+import com.zerobase.shopreservation.common.type.ApprovalState;
 import com.zerobase.shopreservation.common.type.MemberRole;
+import com.zerobase.shopreservation.customer.dto.CheckInDto;
 import com.zerobase.shopreservation.customer.dto.ReservationInputDto;
 import com.zerobase.shopreservation.customer.dto.ReservationTimeTableInputDto;
 import com.zerobase.shopreservation.customer.dto.ReservationTimeTableOutputDto;
@@ -224,5 +226,35 @@ class ReservationServiceTest {
         //then
         System.out.println("list = " + list);
         assertEquals(1, list.stream().findFirst().get().getId()); // Dto로 잘 변환되어 나가는지 확인
+    }
+
+    @Test
+    @DisplayName("체크인 - 성공")
+    void checkin() {
+        //given
+        LocalDateTime now = LocalDateTime.of(2024, 5, 3, 14, 42);
+        CheckInDto dto = CheckInDto.builder()
+                .reservationId(1)
+                .now(now)
+                .build();
+        LocalDateTime reservedTime = LocalDateTime.of(2024, 5, 3, 15, 0);
+        when(reservationRepository.findByIdAndMember(anyLong(), any()))
+                .thenReturn(Optional.of(Reservation.builder()
+                        .approvalState(ApprovalState.ACCEPT)
+                        .checkInAt(null)
+                        .schedule(reservedTime)
+                        .build()
+                ));
+        when(reservationRepository.save(any()))
+                .thenReturn(Reservation.builder().id(1).build());
+
+        //when
+        reservationService.checkIn(dto);
+        ArgumentCaptor<Reservation> captor = ArgumentCaptor.forClass(Reservation.class);
+
+        //then
+        verify(reservationRepository).save(captor.capture());
+        assertEquals(now, captor.getValue().getCheckInAt());
+        assertEquals(reservedTime, captor.getValue().getSchedule());
     }
 }

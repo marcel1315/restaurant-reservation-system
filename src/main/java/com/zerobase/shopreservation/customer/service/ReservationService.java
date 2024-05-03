@@ -6,12 +6,15 @@ import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ReservationNotExistException;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
+import com.zerobase.shopreservation.common.type.ApprovalState;
 import com.zerobase.shopreservation.customer.dto.CheckInDto;
 import com.zerobase.shopreservation.customer.dto.ReservationInputDto;
 import com.zerobase.shopreservation.customer.dto.ReservationTimeTableInputDto;
 import com.zerobase.shopreservation.customer.dto.ReservationTimeTableOutputDto;
 import com.zerobase.shopreservation.customer.exception.InvalidReservationTimeException;
 import com.zerobase.shopreservation.customer.exception.InvalidTimeTableException;
+import com.zerobase.shopreservation.customer.exception.PassedCheckInTimeException;
+import com.zerobase.shopreservation.customer.exception.ReservationNotAcceptedException;
 import com.zerobase.shopreservation.customer.repository.ReservationRepository;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,8 @@ public class ReservationService extends BaseService {
 
     private final ReservationRepository reservationRepository;
     private final ShopRepository shopRepository;
+
+    private static final int CHECKIN_EARLY_MINUTE = 10;
 
     /**
      * 예약하기
@@ -142,22 +147,30 @@ public class ReservationService extends BaseService {
      */
     @Transactional
     public long checkIn(CheckInDto checkInDto) {
+        // 예약이 존재하는지 확인
         Optional<Reservation> optionalReservation = reservationRepository.findByIdAndMember(
                 checkInDto.getReservationId(),
                 getCustomer()
         );
-
         if (optionalReservation.isEmpty()) {
             throw new ReservationNotExistException();
         }
+        Reservation reservation = optionalReservation.get();
 
-        // 체크인 할 수 있는 상태인지 체크 (= 예약시간 10분전이 지났는지 체크)
+        // 체크인 할 수 있는 상태인지 확인 (= 예약시간 10분전인지 확인. 10분전보다 일찍와야 가능한 시나리오)
+        if (checkInDto.getNow().isAfter(reservation.getSchedule().minusMinutes(CHECKIN_EARLY_MINUTE))) {
+            throw new PassedCheckInTimeException();
+        }
 
-        // PENDING, DENY는 아닌지 체크
+        // 예약이 ACCEPT 되었는지 확인
+        if (!reservation.getApprovalState().equals(ApprovalState.ACCEPT)) {
+            throw new ReservationNotAcceptedException(reservation.getApprovalState());
+        }
 
-        optionalReservation.get().setCheckInAt(checkInDto.getCheckInTime());
-        Reservation reservation = reservationRepository.save(optionalReservation.get());
+        // 체크인하고, 저장
+        reservation.setCheckInAt(checkInDto.getNow());
+        Reservation saved = reservationRepository.save(reservation);
 
-        return reservation.getId();
+        return saved.getId();
     }
 }
