@@ -10,7 +10,7 @@ import com.zerobase.shopreservation.common.type.MemberRole;
 import com.zerobase.shopreservation.customer.dto.ReservationInputDto;
 import com.zerobase.shopreservation.customer.dto.ReservationTimeTableInputDto;
 import com.zerobase.shopreservation.customer.dto.ReservationTimeTableOutputDto;
-import com.zerobase.shopreservation.customer.exception.CantReservePastTimeException;
+import com.zerobase.shopreservation.customer.exception.InvalidReservationTimeException;
 import com.zerobase.shopreservation.customer.repository.ReservationRepository;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -134,6 +134,9 @@ class ReservationServiceTest {
                 .willReturn(Optional.of(
                         Shop.builder()
                                 .id(32)
+                                .reservationStartTimeWeekday(LocalTime.of(13, 0))
+                                .reservationFinalTimeWeekday(LocalTime.of(22, 0))
+                                .reservationIntervalMinute(30)
                                 .build()
                 ));
         given(reservationRepository.save(any()))
@@ -141,10 +144,10 @@ class ReservationServiceTest {
                         .id(55)
                         .build()
                 );
-        LocalDateTime oneHourLater = LocalDateTime.now().plusHours(1);
+        LocalDateTime schedule = LocalDateTime.of(2024, 5, 2, 15, 0); // 2024-05-02는 목요일
         ReservationInputDto dto = ReservationInputDto.builder()
                 .shopId(1)
-                .schedule(oneHourLater)
+                .schedule(schedule)
                 .phone("010-1111-2222")
                 .build();
         //when
@@ -178,35 +181,27 @@ class ReservationServiceTest {
     }
 
     @Test
-    @DisplayName("예약하기 - 실패(예약 시간이 과거임)")
-    void reserve_fail_past_schedule() {
+    @DisplayName("예약하기 - 실패(요청한 예약 시간이 예약가능 시간표와 맞지 않음)")
+    void reserve_fail_invalid_reservation_time() {
         //given
-        LocalDateTime oneHourBefore = LocalDateTime.now().minusHours(1);
-        ReservationInputDto dto = ReservationInputDto.builder()
-                .shopId(1)
-                .schedule(oneHourBefore)
-                .phone("010-1111-2222")
-                .build();
-        //when
-        //then
-        assertThrows(CantReservePastTimeException.class,
-                () -> reservationService.reserve(dto)
-        );
-    }
+        when(shopRepository.findById(1L))
+                .thenReturn(Optional.of(Shop.builder()
+                        .id(1)
+                        .reservationStartTimeWeekday(LocalTime.of(13, 0))
+                        .reservationFinalTimeWeekday(LocalTime.of(22, 0))
+                        .reservationIntervalMinute(20)
+                        .build()
+                )); // 예약가능 시간표 -> 13:20, 13:40, 14:00, 14:20, ..
 
-    @Test
-    @DisplayName("예약하기 - 실패(예약 시간이 영업시간 외 시간임)")
-    void reserve_fail_out_of_operation_time() {
-        //given
-        LocalDateTime oneHourBefore = LocalDateTime.now().minusHours(1);
+        LocalDateTime schedule = LocalDateTime.of(2024, 5, 3, 13, 30); // 2024-05-03은 금요일
         ReservationInputDto dto = ReservationInputDto.builder()
                 .shopId(1)
-                .schedule(oneHourBefore)
+                .schedule(schedule)
                 .phone("010-1111-2222")
                 .build();
         //when
         //then
-        assertThrows(CantReservePastTimeException.class,
+        assertThrows(InvalidReservationTimeException.class,
                 () -> reservationService.reserve(dto)
         );
     }
