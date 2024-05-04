@@ -5,6 +5,7 @@ import com.zerobase.shopreservation.common.dto.ShopOutputPageDto;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
+import com.zerobase.shopreservation.customer.dto.OneShopSearchDto;
 import com.zerobase.shopreservation.customer.dto.ShopSearchDto;
 import com.zerobase.shopreservation.customer.mapper.ShopMapper;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
@@ -18,7 +19,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ShopService extends BaseService {
 
-    final private ShopRepository shopRepository;
     final private ShopMapper shopMapper;
 
     /**
@@ -42,11 +42,11 @@ public class ShopService extends BaseService {
     /**
      * 상점 하나를 검색함
      */
-    public ShopOutputDto detail(long id) {
-        Optional<Shop> shop = shopRepository.findById(id);
-        if (shop.isEmpty()) {
+    public ShopOutputDto detail(OneShopSearchDto dto) {
+        ShopOutputDto shopOutputDto = shopMapper.selectOne(dto);
+        if (shopOutputDto == null) {
             throw new ShopNotExistException();
         }
-        return ShopOutputDto.of(shop.get());
+        return shopOutputDto;
     }
 }

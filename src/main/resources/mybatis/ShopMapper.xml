@@ -8,6 +8,7 @@
     </resultMap>
 
     <sql id="selectListWhere">
+        and NOT s.delete_marker
         <if test="name != null">
             and s.name like concat('%', #{name} ,'%')
         </if>
@@ -50,9 +51,10 @@
 
     <select id="selectListCount" resultType="long">
         select count(*)
-        from shop as s
+        from
+            shop as s
         where 1 = 1
-        <include refid="selectListWhere"/>
+            <include refid="selectListWhere"/>
     </select>
 
     <!-- distance_in_km 필드는 쿼리중에 바로 생성하는 것이라서, 같은 레벨에서 참조할 수 없으므로, subquery로  사용함 -->
@@ -87,5 +89,22 @@
                 #{pageStart}, #{pageSize}
         </if>
 
+    </select>
+
+    <select id="selectOne" resultType="com.zerobase.shopreservation.common.dto.ShopOutputDto">
+        select s.*
+            , COUNT(r.id) as rating_count
+            , COALESCE(AVG(r.rate), 0) as rating_average
+            , <include refid="distanceInKm"/>
+        from
+            shop as s
+        left join
+            review r on s.id = r.shop_id
+        where
+            s.id = #{id} and NOT s.delete_marker
+        group by
+            s.id
+        order by
+            s.name asc
     </select>
 </mapper>
