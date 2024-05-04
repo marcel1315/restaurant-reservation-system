@@ -1,7 +1,7 @@
 package com.zerobase.shopreservation.manager.controller;
 
-import com.zerobase.shopreservation.common.dto.ShopOutputDto;
 import com.zerobase.shopreservation.manager.dto.CreateShopDto;
+import com.zerobase.shopreservation.manager.dto.ShopOutputDto;
 import com.zerobase.shopreservation.manager.dto.UpdateShopDto;
 import com.zerobase.shopreservation.manager.service.ShopService;
 import lombok.RequiredArgsConstructor;

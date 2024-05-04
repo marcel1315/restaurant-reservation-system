@@ -1,12 +1,12 @@
 package com.zerobase.shopreservation.manager.controller;
 
 import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
+import com.zerobase.shopreservation.common.dto.ReviewOutputPageDto;
+import com.zerobase.shopreservation.customer.dto.ReviewsOfShopDto;
 import com.zerobase.shopreservation.manager.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController("managerReviewController")
 @RequiredArgsConstructor
@@ -15,9 +15,9 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/manager/reviews")
-    public ResponseEntity<?> listReviews(@RequestParam long shopId) {
-        List<ReviewOutputDto> list = reviewService.listReviews(shopId);
-        return ResponseEntity.ok(list);
+    public ResponseEntity<?> listReviews(@ModelAttribute ReviewsOfShopDto dto) {
+        ReviewOutputPageDto page = reviewService.listReviews(dto);
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/manager/reviews/{reviewId}")

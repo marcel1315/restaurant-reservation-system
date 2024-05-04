@@ -1,8 +1,5 @@
 package com.zerobase.shopreservation.customer.dto;
 
-import com.zerobase.shopreservation.common.type.ShopSort;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 

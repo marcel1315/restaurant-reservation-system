@@ -1,23 +1,25 @@
 package com.zerobase.shopreservation.customer.service;
 
 import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
+import com.zerobase.shopreservation.common.dto.ReviewOutputPageDto;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Review;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ReservationNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
 import com.zerobase.shopreservation.customer.dto.ReviewDto;
+import com.zerobase.shopreservation.customer.dto.ReviewListInfoDto;
+import com.zerobase.shopreservation.customer.dto.ReviewsOfShopDto;
 import com.zerobase.shopreservation.customer.dto.UpdateReviewDto;
 import com.zerobase.shopreservation.customer.exception.*;
+import com.zerobase.shopreservation.customer.mapper.ReviewMapper;
 import com.zerobase.shopreservation.customer.repository.ReservationRepository;
 import com.zerobase.shopreservation.customer.repository.ReviewRepository;
-import com.zerobase.shopreservation.customer.repository.ShopRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +29,7 @@ public class ReviewService extends BaseService {
 
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
-    private final ShopRepository shopRepository;
+    private final ReviewMapper reviewMapper;
 
     /**
      * 리뷰를 남김
@@ -75,13 +77,18 @@ public class ReviewService extends BaseService {
     /**
      * 특정 shop의 review 목록 보기
      */
-    public List<ReviewOutputDto> listReviews(long shopId) {
-        List<Review> reviews = reviewRepository.findByShopId(shopId);
-        List<ReviewOutputDto> list = new ArrayList<>();
-        for (Review r : reviews) {
-            list.add(ReviewOutputDto.of(r));
-        }
-        return list;
+    public ReviewOutputPageDto listReviews(ReviewsOfShopDto dto) {
+        ReviewListInfoDto info = reviewMapper.selectListInfo(dto);
+
+        List<ReviewOutputDto> list = reviewMapper.selectList(dto);
+
+        return ReviewOutputPageDto.builder()
+                .reviews(list)
+                .reviewAverage(info.getReviewAverage())
+                .totalCount(info.getReviewCount())
+                .totalPage(Math.max(info.getReviewCount() - 1, 0) / dto.getPageSize() + 1)
+                .currentPage(dto.getPageIndex())
+                .build();
     }
 
     /**

@@ -1,12 +1,11 @@
 package com.zerobase.shopreservation.customer.service;
 
-import com.zerobase.shopreservation.common.dto.ShopOutputDto;
-import com.zerobase.shopreservation.common.dto.ShopOutputPageDto;
-import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.ShopSort;
 import com.zerobase.shopreservation.customer.dto.OneShopSearchDto;
+import com.zerobase.shopreservation.customer.dto.ShopOutputDto;
+import com.zerobase.shopreservation.customer.dto.ShopOutputPageDto;
 import com.zerobase.shopreservation.customer.dto.ShopSearchDto;
 import com.zerobase.shopreservation.customer.mapper.ShopMapper;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
@@ -18,13 +17,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

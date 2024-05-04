@@ -1,12 +1,12 @@
 package com.zerobase.shopreservation.manager.service;
 
-import com.zerobase.shopreservation.common.dto.ShopOutputDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import com.zerobase.shopreservation.manager.dto.CreateShopDto;
+import com.zerobase.shopreservation.manager.dto.ShopOutputDto;
 import com.zerobase.shopreservation.manager.dto.UpdateShopDto;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
 import com.zerobase.shopreservation.manager.repository.ShopRepository;

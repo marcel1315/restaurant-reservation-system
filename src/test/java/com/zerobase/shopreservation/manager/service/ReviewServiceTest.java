@@ -1,6 +1,7 @@
 package com.zerobase.shopreservation.manager.service;
 
 import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
+import com.zerobase.shopreservation.common.dto.ReviewOutputPageDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Review;
@@ -8,7 +9,11 @@ import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.MemberRole;
+import com.zerobase.shopreservation.common.type.ReviewSort;
+import com.zerobase.shopreservation.customer.dto.ReviewListInfoDto;
+import com.zerobase.shopreservation.customer.dto.ReviewsOfShopDto;
 import com.zerobase.shopreservation.customer.exception.ReviewNotExistException;
+import com.zerobase.shopreservation.customer.mapper.ReviewMapper;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
 import com.zerobase.shopreservation.manager.repository.ReservationRepository;
 import com.zerobase.shopreservation.manager.repository.ReviewRepository;
@@ -52,6 +57,9 @@ class ReviewServiceTest {
 
     @Mock
     private ReservationRepository reservationRepository;
+
+    @Mock
+    private ReviewMapper reviewMapper;
 
     @InjectMocks
     private ReviewService reviewService;
@@ -98,29 +106,37 @@ class ReviewServiceTest {
                 .build();
         when(shopRepository.existsByIdAndManager(shopId, member1))
                 .thenReturn(true);
-        when(reviewRepository.findByShopId(shopId))
+        ReviewsOfShopDto dto = ReviewsOfShopDto.builder()
+                .shopId(1L)
+                .sortBy(ReviewSort.RATING)
+                .pageIndex(1)
+                .pageSize(10)
+                .build();
+        when(reviewMapper.selectListInfo(dto))
+                .thenReturn(ReviewListInfoDto.builder()
+                        .reviewAverage(4.4)
+                        .reviewCount(300)
+                        .build()
+                );
+        when(reviewMapper.selectList(dto))
                 .thenReturn(List.of(
-                        Review.builder()
+                        ReviewOutputDto.builder()
+                                .id(1L)
                                 .rate(3)
                                 .contents("nice place")
-                                .shop(shop)
-                                .reservation(Reservation.builder().id(1L).build())
                                 .build(),
-                        Review.builder()
-                                .rate(4)
-                                .contents("very nice place")
-                                .shop(shop)
-                                .reservation(Reservation.builder().id(2L).build())
+                        ReviewOutputDto.builder()
+                                .id(2L)
                                 .build()
                 ));
 
         //when
-        List<ReviewOutputDto> list = reviewService.listReviews(shopId);
+        ReviewOutputPageDto page = reviewService.listReviews(dto);
 
         //then
-        assertEquals(list.size(), 2);
-        assertEquals(list.stream().findFirst().get().getRate(), 3);
-        assertEquals(list.stream().findFirst().get().getContents(), "nice place");
+        assertEquals(page.getReviews().size(), 2);
+        assertEquals(page.getReviews().stream().findFirst().get().getRate(), 3);
+        assertEquals(page.getReviews().stream().findFirst().get().getContents(), "nice place");
     }
 
     @Test
@@ -129,12 +145,17 @@ class ReviewServiceTest {
         //given
         when(shopRepository.existsByIdAndManager(anyLong(), any()))
                 .thenReturn(false);
-
+        ReviewsOfShopDto dto = ReviewsOfShopDto.builder()
+                .shopId(2L)
+                .sortBy(ReviewSort.RATING)
+                .pageIndex(1)
+                .pageSize(10)
+                .build();
         //when
         //then
         assertThrows(
                 ShopNotExistException.class,
-                () -> reviewService.listReviews(1L)
+                () -> reviewService.listReviews(dto)
         );
     }
 

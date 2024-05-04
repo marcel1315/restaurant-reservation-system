@@ -1,10 +1,14 @@
 package com.zerobase.shopreservation.manager.service;
 
 import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
+import com.zerobase.shopreservation.common.dto.ReviewOutputPageDto;
 import com.zerobase.shopreservation.common.entity.Review;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
+import com.zerobase.shopreservation.customer.dto.ReviewListInfoDto;
+import com.zerobase.shopreservation.customer.dto.ReviewsOfShopDto;
 import com.zerobase.shopreservation.customer.exception.ReviewNotExistException;
+import com.zerobase.shopreservation.customer.mapper.ReviewMapper;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
 import com.zerobase.shopreservation.manager.repository.ReviewRepository;
 import com.zerobase.shopreservation.manager.repository.ShopRepository;
@@ -12,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,21 +25,26 @@ public class ReviewService extends BaseService {
 
     final private ReviewRepository reviewRepository;
     private final ShopRepository shopRepository;
+    private final ReviewMapper reviewMapper;
 
     /**
      * shop의 review 목록 보기
      */
-    public List<ReviewOutputDto> listReviews(long shopId) {
-        if (!shopRepository.existsByIdAndManager(shopId, getManager())) {
+    public ReviewOutputPageDto listReviews(ReviewsOfShopDto dto) {
+        if (!shopRepository.existsByIdAndManager(dto.getShopId(), getManager())) {
             throw new ShopNotExistException();
         }
 
-        List<Review> reviews = reviewRepository.findByShopId(shopId);
-        List<ReviewOutputDto> list = new ArrayList<>();
-        for (Review r : reviews) {
-            list.add(ReviewOutputDto.of(r));
-        }
-        return list;
+        ReviewListInfoDto info = reviewMapper.selectListInfo(dto);
+        List<ReviewOutputDto> list = reviewMapper.selectList(dto);
+
+        return ReviewOutputPageDto.builder()
+                .reviews(list)
+                .reviewAverage(info.getReviewAverage())
+                .totalCount(info.getReviewCount())
+                .totalPage(Math.max(info.getReviewCount() - 1, 0) / dto.getPageSize() + 1)
+                .currentPage(dto.getPageIndex())
+                .build();
     }
 
     /**

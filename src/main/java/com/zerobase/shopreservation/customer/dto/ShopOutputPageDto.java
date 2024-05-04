@@ -1,4 +1,4 @@
-package com.zerobase.shopreservation.common.dto;
+package com.zerobase.shopreservation.customer.dto;
 
 import lombok.Builder;
 import lombok.Data;

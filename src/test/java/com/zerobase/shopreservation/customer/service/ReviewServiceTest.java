@@ -1,6 +1,7 @@
 package com.zerobase.shopreservation.customer.service;
 
 import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
+import com.zerobase.shopreservation.common.dto.ReviewOutputPageDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Review;
@@ -9,8 +10,11 @@ import com.zerobase.shopreservation.common.exception.ReservationNotExistExceptio
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import com.zerobase.shopreservation.customer.dto.ReviewDto;
+import com.zerobase.shopreservation.customer.dto.ReviewListInfoDto;
+import com.zerobase.shopreservation.customer.dto.ReviewsOfShopDto;
 import com.zerobase.shopreservation.customer.dto.UpdateReviewDto;
 import com.zerobase.shopreservation.customer.exception.*;
+import com.zerobase.shopreservation.customer.mapper.ReviewMapper;
 import com.zerobase.shopreservation.customer.repository.ReservationRepository;
 import com.zerobase.shopreservation.customer.repository.ReviewRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -51,6 +55,9 @@ class ReviewServiceTest {
 
     @Mock
     ReservationRepository reservationRepository;
+
+    @Mock
+    ReviewMapper reviewMapper;
 
     @InjectMocks
     ReviewService reviewService;
@@ -367,19 +374,30 @@ class ReviewServiceTest {
     void list_reviews() {
         //given
         long shopId = 1L;
-        when(reviewRepository.findByShopId(shopId))
+        when(reviewMapper.selectList(any()))
                 .thenReturn(List.of(
-                        Review.builder()
+                        ReviewOutputDto.builder()
                                 .id(12L)
-                                .reservation(Reservation.builder().id(13L).build())
-                                .shop(Shop.builder().id(14L).build())
+                                .build(),
+                        ReviewOutputDto.builder()
+                                .id(13L)
                                 .build()
                 ));
+        when(reviewMapper.selectListInfo(any()))
+                .thenReturn(ReviewListInfoDto.builder()
+                        .reviewAverage(3.52)
+                        .reviewCount(5)
+                        .build());
+        ReviewsOfShopDto dto = ReviewsOfShopDto.builder()
+                .shopId(shopId)
+                .pageIndex(1)
+                .pageSize(10)
+                .build();
 
         //when
-        List<ReviewOutputDto> list = reviewService.listReviews(shopId);
+        ReviewOutputPageDto page = reviewService.listReviews(dto);
 
         //then
-        assertEquals(12L, list.stream().findFirst().get().getId());
+        assertEquals(12L, page.getReviews().stream().findFirst().get().getId());
     }
 }
