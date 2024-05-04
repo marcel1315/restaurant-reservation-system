@@ -1,5 +1,6 @@
 package com.zerobase.shopreservation.customer.service;
 
+import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Review;
@@ -30,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -358,5 +360,26 @@ class ReviewServiceTest {
         assertThrows(ReviewCustomerNotMatchException.class,
                 () -> reviewService.deleteReview(reviewId)
         );
+    }
+
+    @Test
+    @DisplayName("리뷰 목록 보기 - 성공")
+    void list_reviews() {
+        //given
+        long shopId = 1L;
+        when(reviewRepository.findByShopId(shopId))
+                .thenReturn(List.of(
+                        Review.builder()
+                                .id(12L)
+                                .reservation(Reservation.builder().id(13L).build())
+                                .shop(Shop.builder().id(14L).build())
+                                .build()
+                ));
+
+        //when
+        List<ReviewOutputDto> list = reviewService.listReviews(shopId);
+
+        //then
+        assertEquals(12L, list.stream().findFirst().get().getId());
     }
 }

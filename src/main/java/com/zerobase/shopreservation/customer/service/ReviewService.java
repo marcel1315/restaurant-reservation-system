@@ -1,5 +1,6 @@
 package com.zerobase.shopreservation.customer.service;
 
+import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Review;
 import com.zerobase.shopreservation.common.entity.Shop;
@@ -10,6 +11,7 @@ import com.zerobase.shopreservation.customer.dto.UpdateReviewDto;
 import com.zerobase.shopreservation.customer.exception.*;
 import com.zerobase.shopreservation.customer.repository.ReservationRepository;
 import com.zerobase.shopreservation.customer.repository.ReviewRepository;
+import com.zerobase.shopreservation.customer.repository.ShopRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class ReviewService extends BaseService {
 
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
+    private final ShopRepository shopRepository;
 
     /**
      * 리뷰를 남김
@@ -70,10 +73,15 @@ public class ReviewService extends BaseService {
     }
 
     /**
-     * 리뷰 보기
+     * 특정 shop의 review 목록 보기
      */
-    public List<Review> getReviews() {
-        return new ArrayList<>();
+    public List<ReviewOutputDto> listReviews(long shopId) {
+        List<Review> reviews = reviewRepository.findByShopId(shopId);
+        List<ReviewOutputDto> list = new ArrayList<>();
+        for (Review r : reviews) {
+            list.add(ReviewOutputDto.of(r));
+        }
+        return list;
     }
 
     /**

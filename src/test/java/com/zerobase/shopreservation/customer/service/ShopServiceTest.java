@@ -1,9 +1,9 @@
 package com.zerobase.shopreservation.customer.service;
 
+import com.zerobase.shopreservation.common.dto.ShopOutputDto;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
-import com.zerobase.shopreservation.customer.dto.ShopOutputDto;
 import com.zerobase.shopreservation.customer.dto.ShopSearchDto;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
 import org.junit.jupiter.api.DisplayName;

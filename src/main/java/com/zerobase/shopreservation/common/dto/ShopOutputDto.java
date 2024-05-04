@@ -1,4 +1,4 @@
-package com.zerobase.shopreservation.customer.dto;
+package com.zerobase.shopreservation.common.dto;
 
 import com.zerobase.shopreservation.common.entity.Shop;
 import lombok.Builder;
@@ -12,6 +12,7 @@ public class ShopOutputDto {
     private String address;
     private String longitude;
     private String latitude;
+    private String description;
 
     public static ShopOutputDto of(Shop shop) {
         return ShopOutputDto.builder()
@@ -20,6 +21,7 @@ public class ShopOutputDto {
                 .address(shop.getAddress())
                 .longitude(shop.getLongitude())
                 .latitude(shop.getLatitude())
+                .description(shop.getDescription())
                 .build();
     }
 }
