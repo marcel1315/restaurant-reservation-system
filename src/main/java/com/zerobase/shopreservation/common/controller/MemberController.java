@@ -1,6 +1,7 @@
 package com.zerobase.shopreservation.common.controller;
 
 import com.zerobase.shopreservation.common.dto.LoginDto;
+import com.zerobase.shopreservation.common.dto.MemberOutputDto;
 import com.zerobase.shopreservation.common.dto.SignupDto;
 import com.zerobase.shopreservation.common.security.TokenProvider;
 import com.zerobase.shopreservation.common.service.MemberService;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,5 +37,11 @@ public class MemberController {
         HashMap<String, String> resultMap = new HashMap<>();
         resultMap.put("token", token);
         return ResponseEntity.ok(resultMap);
+    }
+
+    @GetMapping("/member/info")
+    public ResponseEntity<?> info() {
+        MemberOutputDto memberOutputDto = memberService.info();
+        return ResponseEntity.ok(memberOutputDto);
     }
 }

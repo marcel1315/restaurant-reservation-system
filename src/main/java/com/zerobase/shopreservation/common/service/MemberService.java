@@ -1,6 +1,7 @@
 package com.zerobase.shopreservation.common.service;
 
 import com.zerobase.shopreservation.common.dto.LoginDto;
+import com.zerobase.shopreservation.common.dto.MemberOutputDto;
 import com.zerobase.shopreservation.common.dto.SignupDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.exception.IncorrectPasswordException;
@@ -11,8 +12,10 @@ import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,6 +75,13 @@ public class MemberService implements UserDetailsService {
     }
 
     /**
+     * 회면 정보 보기
+     */
+    public MemberOutputDto info() {
+        return MemberOutputDto.of(getMember());
+    }
+
+    /**
      * 토큰으로 사용자를 확인할 때 사용됨
      * Spring security의 UserDetailsService의 메서드를 구현함
      * username과 role을 동시에 인자로 받아 특정 User(Member)를 인식함 -> 같은 이메일의 customer와 manager 이메일 생성이 가능함
@@ -101,5 +112,21 @@ public class MemberService implements UserDetailsService {
         grantedAuthorities.add(new SimpleGrantedAuthority(role));
 
         return new User(username, member.get().getPassword(), grantedAuthorities);
+    }
+
+    private Member getMember() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String role = "";
+        Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+        for (GrantedAuthority authority : authorities) {
+            role = authority.getAuthority();
+            break;
+        }
+
+        Optional<Member> member = memberRepository.findByEmailAndRole(auth.getName(), MemberRole.valueOf(role));
+        if (member.isEmpty()) {
+            throw new MemberNotExistException();
+        }
+        return member.get();
     }
 }

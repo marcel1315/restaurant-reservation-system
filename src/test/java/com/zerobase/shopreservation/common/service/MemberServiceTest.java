@@ -1,6 +1,7 @@
 package com.zerobase.shopreservation.common.service;
 
 import com.zerobase.shopreservation.common.dto.LoginDto;
+import com.zerobase.shopreservation.common.dto.MemberOutputDto;
 import com.zerobase.shopreservation.common.dto.SignupDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.exception.IncorrectPasswordException;
@@ -16,16 +17,22 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Common MemberService Test")
@@ -238,5 +245,39 @@ class MemberServiceTest {
         assertThrows(MemberNotExistException.class,
                 () -> memberService.loadUserByUsername(usernameAndRole)
         );
+    }
+
+    @Test
+    @DisplayName("회원정보 보기")
+    void info() {
+        //given
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_CUSTOMER");
+        Collection authorities = Collections.singleton(authority); // Use raw type here
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getAuthorities()).thenReturn(authorities);
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        SecurityContextHolder.setContext(securityContext);
+
+        Member member1 = Member.builder()
+                .id(1)
+                .email("abc@gmail.com")
+                .role(MemberRole.ROLE_CUSTOMER)
+                .password("somehashedvalue")
+                .phone("010-3333-2222")
+                .build();
+        when(memberRepository.findByEmailAndRole(any(), any()))
+                .thenReturn(Optional.of(member1));
+
+        //when
+        MemberOutputDto info = memberService.info();
+
+        //then
+        assertEquals(MemberRole.ROLE_CUSTOMER, info.getRole());
+
+        SecurityContextHolder.clearContext();
     }
 }
