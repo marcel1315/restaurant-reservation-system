@@ -14,6 +14,12 @@ spring:
   jwt:
     secret: cmVzdGF1cmFudC1yZXNlcnZhdGlvbi1zeXN0ZW0tc2VjcmV0LWtleS1hbmQtdGhpcy1zaG91bGQtYmUtbW9yZS1sZW5ndGh5Cg==
 
+mybatis:
+  mapper-locations: mybatis/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
 logging:
   level:
     org.springframework.security: DEBUG

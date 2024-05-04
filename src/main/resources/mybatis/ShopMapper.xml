@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zerobase.shopreservation.customer.mapper.ShopMapper">
+
+    <sql id="selectListWhere">
+        <if test="name != null">
+            and name like concat('%', #{name} ,'%')
+        </if>
+        <if test="address != null">
+            and address like concat('%', #{address} ,'%')
+        </if>
+    </sql>
+
+    <sql id="selectListOrder">
+        <choose>
+            <when test="sortBy.name == 'NAME'">
+                order by name asc
+            </when>
+            <when test="sortBy.name == 'RATING'">
+                order by address desc
+            </when>
+        </choose>
+    </sql>
+
+    <!-- Haversine Formula. 6371은 지구의 반지름. 지구를 완전한 구 라고 가정했을 때의 계산 -->
+    <sql id="distanceInKm">
+        <if test="currentLatitude != null and currentLongitude != null">
+            (6371 * acos(
+            cos(radians(latitude))
+            * cos(radians(#{currentLatitude}))
+            * cos(radians(#{currentLongitude})
+            - radians(longitude))
+            + sin(radians(latitude))
+            * sin(radians(#{currentLatitude}))
+            )) as distance_in_km
+        </if>
+        <if test="currentLatitude == null or currentLongitude == null">
+            (0) as distance_in_km
+        </if>
+    </sql>
+
+    <select id="selectListCount" resultType="long">
+        select count(*)
+        from shop
+        where 1 = 1
+        <include refid="selectListWhere"/>
+    </select>
+
+    <!-- distance_in_km 필드는 쿼리중에 바로 생성하는 것이라서, 같은 레벨에서 참조할 수 없으므로, subquery로  사용함 -->
+    <!-- shop의 갯수가 많아지면 모든 shop의 거리를 계산하고, 정렬해야 함. 이런 계산이 무리없는 수준은 어디까지? -->
+    <select id="selectList" resultType="com.zerobase.shopreservation.common.dto.ShopOutputDto">
+
+        <if test="sortBy.name != 'DISTANCE'">
+            select *
+            ,
+            <include refid="distanceInKm"/>
+            from shop
+            where 1 = 1
+            <include refid="selectListWhere"/>
+            <include refid="selectListOrder"/>
+            limit #{pageStart}, #{pageSize}
+        </if>
+
+        <if test="sortBy.name == 'DISTANCE'">
+            select * from (
+            select *
+            ,
+            <include refid="distanceInKm"/>
+            from shop
+            where 1 = 1
+            <include refid="selectListWhere"/>
+            ) as sub
+            order by distance_in_km asc
+            limit #{pageStart}, #{pageSize}
+        </if>
+
+    </select>
+</mapper>

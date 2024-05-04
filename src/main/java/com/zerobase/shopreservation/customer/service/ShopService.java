@@ -1,15 +1,16 @@
 package com.zerobase.shopreservation.customer.service;
 
 import com.zerobase.shopreservation.common.dto.ShopOutputDto;
+import com.zerobase.shopreservation.common.dto.ShopOutputPageDto;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
 import com.zerobase.shopreservation.customer.dto.ShopSearchDto;
+import com.zerobase.shopreservation.customer.mapper.ShopMapper;
 import com.zerobase.shopreservation.customer.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,31 +19,24 @@ import java.util.Optional;
 public class ShopService extends BaseService {
 
     final private ShopRepository shopRepository;
+    final private ShopMapper shopMapper;
 
     /**
      * 상점을 검색함
      * ShopSearchDto에 name, address 모두 없다면, 전체를 검색함
      */
-    public List<ShopOutputDto> search(ShopSearchDto shopSearchDto) {
-        List<Shop> list;
-        String name = shopSearchDto.getName();
-        String address = shopSearchDto.getAddress();
+    public ShopOutputPageDto search(ShopSearchDto shopSearchDto) {
+        long totalCount = shopMapper.selectListCount(shopSearchDto);
+        // 0row -> 1page / 10row -> 1page / 11row -> 2page
+        long totalPage = Math.max(totalCount - 1, 0) / shopSearchDto.getPageSize() + 1;
 
-        if (name != null && address != null) {
-            list = shopRepository.findByNameContainsAndAddressContainsAndDeleteMarker(name, address, false);
-        } else if (name != null) {
-            list = shopRepository.findByNameContainsAndDeleteMarker(name, false);
-        } else if (address != null) {
-            list = shopRepository.findByAddressContainsAndDeleteMarker(address, false);
-        } else {
-            list = shopRepository.findByDeleteMarker(false);
-        }
-
-        List<ShopOutputDto> listDto = new ArrayList<>();
-        for (Shop r : list) {
-            listDto.add(ShopOutputDto.of(r));
-        }
-        return listDto;
+        List<ShopOutputDto> shopOutputDtoList = shopMapper.selectList(shopSearchDto);
+        return ShopOutputPageDto.builder()
+                .shops(shopOutputDtoList)
+                .totalCount(totalCount)
+                .totalPage(totalPage)
+                .currentPage(shopSearchDto.getPageIndex())
+                .build();
     }
 
     /**

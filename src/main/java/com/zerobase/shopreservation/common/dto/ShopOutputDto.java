@@ -13,6 +13,7 @@ public class ShopOutputDto {
     private String longitude;
     private String latitude;
     private String description;
+    private String distanceInKm;
 
     public static ShopOutputDto of(Shop shop) {
         return ShopOutputDto.builder()
@@ -22,6 +23,7 @@ public class ShopOutputDto {
                 .longitude(shop.getLongitude())
                 .latitude(shop.getLatitude())
                 .description(shop.getDescription())
+                .distanceInKm(null)
                 .build();
     }
 }
