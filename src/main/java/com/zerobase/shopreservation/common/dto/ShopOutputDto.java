@@ -14,6 +14,8 @@ public class ShopOutputDto {
     private String latitude;
     private String description;
     private String distanceInKm;
+    private String ratingAverage;
+    private String ratingCount;
 
     public static ShopOutputDto of(Shop shop) {
         return ShopOutputDto.builder()
@@ -24,6 +26,8 @@ public class ShopOutputDto {
                 .latitude(shop.getLatitude())
                 .description(shop.getDescription())
                 .distanceInKm(null)
+                .ratingAverage(null)
+                .ratingCount(null)
                 .build();
     }
 }

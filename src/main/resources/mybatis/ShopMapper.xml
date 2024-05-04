@@ -3,36 +3,28 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zerobase.shopreservation.customer.mapper.ShopMapper">
+    <resultMap id="shopResultMap" type="com.zerobase.shopreservation.common.dto.ShopOutputDto">
+        <result column="rating_average" property="ratingAverage" />
+    </resultMap>
 
     <sql id="selectListWhere">
         <if test="name != null">
-            and name like concat('%', #{name} ,'%')
+            and s.name like concat('%', #{name} ,'%')
         </if>
         <if test="address != null">
-            and address like concat('%', #{address} ,'%')
+            and s.address like concat('%', #{address} ,'%')
         </if>
-    </sql>
-
-    <sql id="selectListOrder">
-        <choose>
-            <when test="sortBy.name == 'NAME'">
-                order by name asc
-            </when>
-            <when test="sortBy.name == 'RATING'">
-                order by address desc
-            </when>
-        </choose>
     </sql>
 
     <!-- Haversine Formula. 6371은 지구의 반지름. 지구를 완전한 구 라고 가정했을 때의 계산 -->
     <sql id="distanceInKm">
         <if test="currentLatitude != null and currentLongitude != null">
             (6371 * acos(
-            cos(radians(latitude))
+            cos(radians(s.latitude))
             * cos(radians(#{currentLatitude}))
             * cos(radians(#{currentLongitude})
-            - radians(longitude))
-            + sin(radians(latitude))
+            - radians(s.longitude))
+            + sin(radians(s.latitude))
             * sin(radians(#{currentLatitude}))
             )) as distance_in_km
         </if>
@@ -41,9 +33,24 @@
         </if>
     </sql>
 
+    <sql id="aggregated">
+        select s.*
+            , COUNT(r.id) as rating_count
+            , COALESCE(AVG(r.rate), 0) as rating_average
+            , <include refid="distanceInKm"/>
+        from
+            shop as s
+        left join
+            review r on s.id = r.shop_id
+        where 1 = 1
+            <include refid="selectListWhere"/>
+        group by
+            s.id
+    </sql>
+
     <select id="selectListCount" resultType="long">
         select count(*)
-        from shop
+        from shop as s
         where 1 = 1
         <include refid="selectListWhere"/>
     </select>
@@ -52,28 +59,32 @@
     <!-- shop의 갯수가 많아지면 모든 shop의 거리를 계산하고, 정렬해야 함. 이런 계산이 무리없는 수준은 어디까지? -->
     <select id="selectList" resultType="com.zerobase.shopreservation.common.dto.ShopOutputDto">
 
-        <if test="sortBy.name != 'DISTANCE'">
-            select *
-            ,
-            <include refid="distanceInKm"/>
-            from shop
-            where 1 = 1
-            <include refid="selectListWhere"/>
-            <include refid="selectListOrder"/>
-            limit #{pageStart}, #{pageSize}
+        <if test="sortBy.name == 'NAME'">
+            <include refid="aggregated" />
+            order by
+                s.name asc
+            limit
+                #{pageStart}, #{pageSize}
         </if>
 
         <if test="sortBy.name == 'DISTANCE'">
             select * from (
-            select *
-            ,
-            <include refid="distanceInKm"/>
-            from shop
-            where 1 = 1
-            <include refid="selectListWhere"/>
+                <include refid="aggregated" />
             ) as sub
-            order by distance_in_km asc
-            limit #{pageStart}, #{pageSize}
+            order by
+                distance_in_km asc
+            limit
+                #{pageStart}, #{pageSize}
+        </if>
+
+        <if test="sortBy.name == 'RATING'">
+            select * from (
+                <include refid="aggregated" />
+            ) as sub
+            order by
+                rating_average desc
+            limit
+                #{pageStart}, #{pageSize}
         </if>
 
     </select>
