@@ -1,4 +1,4 @@
-package com.zerobase.shopreservation.customer.dto;
+package com.zerobase.shopreservation.common.dto;
 
 import com.zerobase.shopreservation.common.type.ReviewSort;
 import jakarta.validation.constraints.NotNull;

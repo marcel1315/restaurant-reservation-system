@@ -2,7 +2,7 @@ package com.zerobase.shopreservation.customer.controller;
 
 import com.zerobase.shopreservation.common.dto.ReviewOutputPageDto;
 import com.zerobase.shopreservation.customer.dto.ReviewDto;
-import com.zerobase.shopreservation.customer.dto.ReviewsOfShopDto;
+import com.zerobase.shopreservation.common.dto.ReviewsOfShopDto;
 import com.zerobase.shopreservation.customer.dto.UpdateReviewDto;
 import com.zerobase.shopreservation.customer.service.ReviewService;
 import lombok.RequiredArgsConstructor;

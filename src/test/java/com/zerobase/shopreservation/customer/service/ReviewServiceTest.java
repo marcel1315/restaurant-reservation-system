@@ -10,8 +10,8 @@ import com.zerobase.shopreservation.common.exception.ReservationNotExistExceptio
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import com.zerobase.shopreservation.customer.dto.ReviewDto;
-import com.zerobase.shopreservation.customer.dto.ReviewListInfoDto;
-import com.zerobase.shopreservation.customer.dto.ReviewsOfShopDto;
+import com.zerobase.shopreservation.common.dto.ReviewListInfoDto;
+import com.zerobase.shopreservation.common.dto.ReviewsOfShopDto;
 import com.zerobase.shopreservation.customer.dto.UpdateReviewDto;
 import com.zerobase.shopreservation.customer.exception.*;
 import com.zerobase.shopreservation.customer.mapper.ReviewMapper;

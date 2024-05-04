@@ -2,7 +2,7 @@ package com.zerobase.shopreservation.manager.controller;
 
 import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
 import com.zerobase.shopreservation.common.dto.ReviewOutputPageDto;
-import com.zerobase.shopreservation.customer.dto.ReviewsOfShopDto;
+import com.zerobase.shopreservation.common.dto.ReviewsOfShopDto;
 import com.zerobase.shopreservation.manager.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

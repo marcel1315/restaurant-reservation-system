@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zerobase.shopreservation.customer.mapper.ReviewMapper">
 
-    <select id="selectListInfo" resultType="com.zerobase.shopreservation.customer.dto.ReviewListInfoDto">
+    <select id="selectListInfo" resultType="com.zerobase.shopreservation.common.dto.ReviewListInfoDto">
         select COUNT(*) as            review_count
              , COALESCE(AVG(rate), 0) review_average
         from review

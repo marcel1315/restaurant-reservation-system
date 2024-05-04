@@ -1,8 +1,8 @@
 package com.zerobase.shopreservation.customer.mapper;
 
 import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
-import com.zerobase.shopreservation.customer.dto.ReviewListInfoDto;
-import com.zerobase.shopreservation.customer.dto.ReviewsOfShopDto;
+import com.zerobase.shopreservation.common.dto.ReviewListInfoDto;
+import com.zerobase.shopreservation.common.dto.ReviewsOfShopDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
