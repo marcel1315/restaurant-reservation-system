@@ -1,11 +1,15 @@
 package com.zerobase.shopreservation.manager.service;
 
 import com.zerobase.shopreservation.common.dto.ReservationOutputDto;
+import com.zerobase.shopreservation.common.dto.ReservationOutputPageDto;
+import com.zerobase.shopreservation.common.dto.ReservationsOfShopDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ReservationNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
+import com.zerobase.shopreservation.common.util.TotalPage;
+import com.zerobase.shopreservation.customer.mapper.ReservationMapper;
 import com.zerobase.shopreservation.manager.dto.ReservationApprovalDto;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
 import com.zerobase.shopreservation.manager.repository.ReservationRepository;
@@ -14,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,20 +28,24 @@ public class ReservationService extends BaseService {
 
     private final ReservationRepository reservationRepository;
     private final ShopRepository shopRepository;
+    private final ReservationMapper reservationMapper;
 
     /**
      * 예약 목록 나열
      * manager가 자신의 shop에 있는 예약을 조회함
      */
-    public List<ReservationOutputDto> list(long shopId) {
-        checkShopManagerMatch(shopId);
+    public ReservationOutputPageDto list(ReservationsOfShopDto dto) {
+        checkShopManagerMatch(dto.getShopId());
 
-        List<Reservation> reservations = reservationRepository.findAllByShopId(shopId);
-        List<ReservationOutputDto> reservationOutputDtos = new ArrayList<>();
-        for (Reservation r : reservations) {
-            reservationOutputDtos.add(ReservationOutputDto.of(r));
-        }
-        return reservationOutputDtos;
+        long total = reservationMapper.selectListCount(dto);
+        List<ReservationOutputDto> list = reservationMapper.selectList(dto);
+
+        return ReservationOutputPageDto.builder()
+                .reservations(list)
+                .totalCount(total)
+                .totalPage(TotalPage.of(total, dto.getPageSize()))
+                .currentPage(dto.getPageIndex())
+                .build();
     }
 
     /**

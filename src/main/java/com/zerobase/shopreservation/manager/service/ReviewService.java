@@ -1,12 +1,13 @@
 package com.zerobase.shopreservation.manager.service;
 
+import com.zerobase.shopreservation.common.dto.ReviewListInfoDto;
 import com.zerobase.shopreservation.common.dto.ReviewOutputDto;
 import com.zerobase.shopreservation.common.dto.ReviewOutputPageDto;
+import com.zerobase.shopreservation.common.dto.ReviewsOfShopDto;
 import com.zerobase.shopreservation.common.entity.Review;
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
-import com.zerobase.shopreservation.common.dto.ReviewListInfoDto;
-import com.zerobase.shopreservation.common.dto.ReviewsOfShopDto;
+import com.zerobase.shopreservation.common.util.TotalPage;
 import com.zerobase.shopreservation.customer.exception.ReviewNotExistException;
 import com.zerobase.shopreservation.customer.mapper.ReviewMapper;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
@@ -42,7 +43,7 @@ public class ReviewService extends BaseService {
                 .reviews(list)
                 .reviewAverage(info.getReviewAverage())
                 .totalCount(info.getReviewCount())
-                .totalPage(Math.max(info.getReviewCount() - 1, 0) / dto.getPageSize() + 1)
+                .totalPage(TotalPage.of(info.getReviewCount(), dto.getPageSize()))
                 .currentPage(dto.getPageIndex())
                 .build();
     }

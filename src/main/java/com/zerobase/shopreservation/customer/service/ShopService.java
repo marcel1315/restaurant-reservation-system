@@ -2,6 +2,7 @@ package com.zerobase.shopreservation.customer.service;
 
 import com.zerobase.shopreservation.common.exception.ShopNotExistException;
 import com.zerobase.shopreservation.common.service.BaseService;
+import com.zerobase.shopreservation.common.util.TotalPage;
 import com.zerobase.shopreservation.customer.dto.OneShopSearchDto;
 import com.zerobase.shopreservation.customer.dto.ShopOutputDto;
 import com.zerobase.shopreservation.customer.dto.ShopOutputPageDto;
@@ -24,14 +25,12 @@ public class ShopService extends BaseService {
      */
     public ShopOutputPageDto search(ShopSearchDto shopSearchDto) {
         long totalCount = shopMapper.selectListCount(shopSearchDto);
-        // 0row -> 1page / 10row -> 1page / 11row -> 2page
-        long totalPage = Math.max(totalCount - 1, 0) / shopSearchDto.getPageSize() + 1;
 
         List<ShopOutputDto> shopOutputDtoList = shopMapper.selectList(shopSearchDto);
         return ShopOutputPageDto.builder()
                 .shops(shopOutputDtoList)
                 .totalCount(totalCount)
-                .totalPage(totalPage)
+                .totalPage(TotalPage.of(totalCount, shopSearchDto.getPageSize()))
                 .currentPage(shopSearchDto.getPageIndex())
                 .build();
     }

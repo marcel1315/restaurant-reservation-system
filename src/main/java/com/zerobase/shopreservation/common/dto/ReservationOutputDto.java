@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @Builder
 public class ReservationOutputDto {
     long id;
-    LocalDateTime schedule;
-    String phone;
     ApprovalState approvalState;
     LocalDateTime checkInAt;
+    LocalDateTime schedule;
+    String phone;
 
     public static ReservationOutputDto of(Reservation reservation) {
         return ReservationOutputDto.builder()

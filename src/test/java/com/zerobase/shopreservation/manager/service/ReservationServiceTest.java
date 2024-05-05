@@ -1,6 +1,8 @@
 package com.zerobase.shopreservation.manager.service;
 
 import com.zerobase.shopreservation.common.dto.ReservationOutputDto;
+import com.zerobase.shopreservation.common.dto.ReservationOutputPageDto;
+import com.zerobase.shopreservation.common.dto.ReservationsOfShopDto;
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Shop;
@@ -8,6 +10,7 @@ import com.zerobase.shopreservation.common.exception.ReservationNotExistExceptio
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.ApprovalState;
 import com.zerobase.shopreservation.common.type.MemberRole;
+import com.zerobase.shopreservation.customer.mapper.ReservationMapper;
 import com.zerobase.shopreservation.manager.dto.ReservationApprovalDto;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
 import com.zerobase.shopreservation.manager.repository.ReservationRepository;
@@ -51,6 +54,9 @@ class ReservationServiceTest {
 
     @Mock
     MemberRepository memberRepository;
+
+    @Mock
+    ReservationMapper reservationMapper;
 
     @InjectMocks
     ReservationService reservationService;
@@ -98,22 +104,32 @@ class ReservationServiceTest {
                                 .id(2)
                                 .build()
                 ));
-        given(reservationRepository.findAllByShopId(1L))
-                .willReturn(List.of(
-                                Reservation.builder()
-                                        .id(1)
-                                        .build(),
-                                Reservation.builder()
-                                        .id(2)
-                                        .build()
-                        )
-                );
+        when(reservationMapper.selectListCount(any()))
+                .thenReturn(3L);
+        when(reservationMapper.selectList(any()))
+                .thenReturn(List.of(
+                        ReservationOutputDto
+                                .builder()
+                                .build(),
+                        ReservationOutputDto
+                                .builder()
+                                .build(),
+                        ReservationOutputDto
+                                .builder()
+                                .build()
+                ));
 
+        ReservationsOfShopDto dto = ReservationsOfShopDto.builder()
+                .shopId(1L)
+                .pageIndex(1)
+                .pageSize(10)
+                .build();
         //when
-        List<ReservationOutputDto> list = reservationService.list(1L);
+        ReservationOutputPageDto list = reservationService.list(dto);
 
         //then
-        assertEquals(2, list.size());
+        assertEquals(3, list.getReservations().size());
+        assertEquals(3, list.getTotalCount());
     }
 
     @Test
@@ -123,10 +139,15 @@ class ReservationServiceTest {
         given(shopRepository.findByManagerAndDeleteMarker(any(), anyBoolean()))
                 .willReturn(List.of());
 
+        ReservationsOfShopDto dto = ReservationsOfShopDto
+                .builder()
+                .shopId(1L)
+                .build();
+
         //when
         //then
         assertThrows(ShopManagerNotMatchException.class,
-                () -> reservationService.list(1L)
+                () -> reservationService.list(dto)
         );
     }
 
