@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +124,8 @@ public class ReservationService extends BaseService {
      * 예약한 목록 보기
      */
     public List<ReservationOutputDto> list() {
-        List<Reservation> list = reservationRepository.findByMemberOrderByScheduleDesc(getCustomer());
+        LocalDateTime after = LocalDateTime.now().minusDays(1);
+        List<Reservation> list = reservationRepository.findByMemberAndScheduleAfterOrderByScheduleDesc(getCustomer(), after);
         List<ReservationOutputDto> listDto = new ArrayList<>();
         for (Reservation r : list) {
             listDto.add(ReservationOutputDto.of(r));

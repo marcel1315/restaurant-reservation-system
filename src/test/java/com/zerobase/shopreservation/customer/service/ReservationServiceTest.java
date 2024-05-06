@@ -212,11 +212,10 @@ class ReservationServiceTest {
     @DisplayName("예약 목록 확인 - 성공")
     void list_reservations() {
         //given
-        given(reservationRepository.findByMemberOrderByScheduleDesc(any()))
+        given(reservationRepository.findByMemberAndScheduleAfterOrderByScheduleDesc(any(), any()))
                 .willReturn(List.of(
                         Reservation.builder()
                                 .id(1)
-                                .schedule(LocalDateTime.now())
                                 .build()
                 ));
 
@@ -224,7 +223,6 @@ class ReservationServiceTest {
         List<ReservationOutputDto> list = reservationService.list();
 
         //then
-        System.out.println("list = " + list);
         assertEquals(1, list.stream().findFirst().get().getId()); // Dto로 잘 변환되어 나가는지 확인
     }
 
