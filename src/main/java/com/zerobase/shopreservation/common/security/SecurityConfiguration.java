@@ -28,6 +28,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.POST, "/member/signup").permitAll()
                         .requestMatchers(HttpMethod.POST, "/member/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/member/info").hasAnyAuthority(MemberRole.ROLE_CUSTOMER.toString(), MemberRole.ROLE_MANAGER.toString())
+                        .requestMatchers(HttpMethod.GET, "/customer/reservations/timetable").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/customer/shops/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/customer/reviews/**").permitAll()
+                        .requestMatchers("/customer/**").hasAuthority(MemberRole.ROLE_CUSTOMER.toString())
                         .requestMatchers("/manager/**").hasAuthority(MemberRole.ROLE_MANAGER.toString())
                         .anyRequest().authenticated()
                 )
