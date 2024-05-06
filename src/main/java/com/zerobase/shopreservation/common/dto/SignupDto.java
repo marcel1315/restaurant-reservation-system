@@ -2,11 +2,11 @@ package com.zerobase.shopreservation.common.dto;
 
 import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.type.MemberRole;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 

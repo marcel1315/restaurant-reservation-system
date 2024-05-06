@@ -48,11 +48,11 @@ public class ReviewController {
     )
     @DeleteMapping("/manager/reviews/{reviewId}")
     public ResponseEntity<?> removeReview(
-          @PathVariable
-          @Parameter(
-                  schema = @Schema(defaultValue = "1")
-          )
-          long reviewId) {
+            @PathVariable
+            @Parameter(
+                    schema = @Schema(defaultValue = "1")
+            )
+            long reviewId) {
         reviewService.removeReview(reviewId);
         return ResponseEntity.ok(null);
     }
