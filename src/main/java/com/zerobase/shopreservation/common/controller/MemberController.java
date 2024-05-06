@@ -24,12 +24,18 @@ public class MemberController {
     private final MemberService memberService;
     private final TokenProvider tokenProvider;
 
+    /**
+     * 회원가입
+     */
     @PostMapping("/member/signup")
     public ResponseEntity<?> signup(@Validated @RequestBody SignupDto signupDto) {
         memberService.signup(signupDto);
         return ResponseEntity.ok(null);
     }
 
+    /**
+     * 로그인
+     */
     @PostMapping("/member/login")
     public ResponseEntity<?> login(@Validated @RequestBody LoginDto loginDto) {
         memberService.login(loginDto);
@@ -39,6 +45,9 @@ public class MemberController {
         return ResponseEntity.ok(resultMap);
     }
 
+    /**
+     * 회원 정보 보기
+     */
     @GetMapping("/member/info")
     public ResponseEntity<?> info() {
         MemberOutputDto memberOutputDto = memberService.info();

@@ -19,6 +19,9 @@ public class ShopController {
 
     private final ShopService shopService;
 
+    /**
+     * 상점의 자세한 정보 보기
+     */
     @GetMapping("/customer/shops/{id}")
     public ResponseEntity<?> detail(@PathVariable long id, @ModelAttribute OneShopSearchDto dto) {
         dto.setId(id);
@@ -26,6 +29,9 @@ public class ShopController {
         return ResponseEntity.ok(shopOutputDto);
     }
 
+    /**
+     * 상점 목록 보기
+     */
     @GetMapping("/customer/shops")
     public ResponseEntity<?> search(@Validated @ModelAttribute ShopSearchDto shopSearchDto) {
         ShopOutputPageDto page = shopService.search(shopSearchDto);

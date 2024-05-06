@@ -18,6 +18,9 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    /**
+     * 예약에 대한 리뷰를 남김
+     */
     @PostMapping("/customer/review")
     public ResponseEntity<?> review(@Validated @RequestBody ReviewDto reviewDto) {
         LocalDateTime now = LocalDateTime.now();
@@ -25,18 +28,28 @@ public class ReviewController {
         return ResponseEntity.ok(null);
     }
 
+    /**
+     * 예약에 대한 리뷰를 수정
+     */
     @PostMapping("/customer/review/{reviewId}")
     public ResponseEntity<?> review(@Validated @RequestBody UpdateReviewDto updateReviewDto, @PathVariable long reviewId) {
         reviewService.updateReview(reviewId, updateReviewDto);
         return ResponseEntity.ok(null);
     }
 
+    /**
+     * 자신이 남긴 특정 예약에 대한 리뷰를 제거
+     */
     @DeleteMapping("/customer/review/{reviewId}")
     public ResponseEntity<?> review(@PathVariable long reviewId) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.ok(null);
     }
 
+    /**
+     * 특정 상점에 대한 모든 리뷰를 봄
+     * Pagination이 적용되어 있음
+     */
     @GetMapping("/customer/reviews")
     public ResponseEntity<?> listReviews(@ModelAttribute ReviewsOfShopDto dto) {
         ReviewOutputPageDto page = reviewService.listReviews(dto);
