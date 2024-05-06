@@ -18,11 +18,6 @@ public class ShopController {
 
     private final ShopService shopService;
 
-    @GetMapping("/manager/health")
-    public ResponseEntity<?> health() {
-        return ResponseEntity.ok(Collections.singletonMap("health", true));
-    }
-
     @PostMapping("/manager/shops")
     public ResponseEntity<?> create(@Validated @RequestBody CreateShopDto createShopDto) {
         shopService.create(createShopDto);

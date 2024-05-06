@@ -26,7 +26,6 @@ public class SecurityConfiguration {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.GET, "/health").permitAll()
                         .requestMatchers(HttpMethod.POST, "/member/signup").permitAll()
                         .requestMatchers(HttpMethod.POST, "/member/login").permitAll()
                         .requestMatchers("/manager/**").hasAuthority(MemberRole.ROLE_MANAGER.toString())
