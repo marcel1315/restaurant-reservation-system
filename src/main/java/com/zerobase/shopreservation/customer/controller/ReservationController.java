@@ -1,7 +1,6 @@
 package com.zerobase.shopreservation.customer.controller;
 
 import com.zerobase.shopreservation.common.dto.ReservationOutputDto;
-import com.zerobase.shopreservation.customer.dto.CheckInDto;
 import com.zerobase.shopreservation.customer.dto.ReservationInputDto;
 import com.zerobase.shopreservation.customer.dto.ReservationTimeTableInputDto;
 import com.zerobase.shopreservation.customer.dto.ReservationTimeTableOutputDto;
@@ -45,11 +44,5 @@ public class ReservationController {
     public ResponseEntity<?> list() {
         List<ReservationOutputDto> list = reservationService.list();
         return ResponseEntity.ok(list);
-    }
-
-    @PostMapping("/customer/reservations/checkin")
-    public ResponseEntity<?> checkIn(@Validated @RequestBody CheckInDto checkInDto) {
-        long reservationId = reservationService.checkIn(checkInDto);
-        return ResponseEntity.ok(Collections.singletonMap("reservationId", reservationId));
     }
 }

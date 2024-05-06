@@ -1,4 +1,4 @@
-package com.zerobase.shopreservation.customer.dto;
+package com.zerobase.shopreservation.manager.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

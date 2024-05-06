@@ -7,10 +7,11 @@ import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ReservationNotExistException;
+import com.zerobase.shopreservation.common.mapper.ReservationMapper;
 import com.zerobase.shopreservation.common.repository.MemberRepository;
 import com.zerobase.shopreservation.common.type.ApprovalState;
 import com.zerobase.shopreservation.common.type.MemberRole;
-import com.zerobase.shopreservation.customer.mapper.ReservationMapper;
+import com.zerobase.shopreservation.manager.dto.CheckInDto;
 import com.zerobase.shopreservation.manager.dto.ReservationApprovalDto;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
 import com.zerobase.shopreservation.manager.repository.ReservationRepository;
@@ -30,6 +31,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -69,10 +71,10 @@ class ReservationServiceTest {
         Collection authorities = Collections.singleton(authority); // Use raw type here
 
         Authentication authentication = mock(Authentication.class);
-        when(authentication.getAuthorities()).thenReturn(authorities);
+        lenient().when(authentication.getAuthorities()).thenReturn(authorities);
 
         SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
+        lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
         Member member1 = Member.builder()
@@ -82,8 +84,8 @@ class ReservationServiceTest {
                 .password("somehashedvalue")
                 .phone("010-3333-2222")
                 .build();
-        given(memberRepository.findByEmailAndRole(any(), any()))
-                .willReturn(Optional.of(member1));
+        lenient().when(memberRepository.findByEmailAndRole(any(), any()))
+                .thenReturn(Optional.of(member1));
     }
 
     @AfterEach
@@ -234,5 +236,35 @@ class ReservationServiceTest {
         assertThrows(ShopManagerNotMatchException.class,
                 () -> reservationService.updateApproval(dto)
         );
+    }
+
+    @Test
+    @DisplayName("체크인 - 성공")
+    void checkin() {
+        //given
+        LocalDateTime now = LocalDateTime.of(2024, 5, 3, 14, 42);
+        CheckInDto dto = CheckInDto.builder()
+                .reservationId(1)
+                .now(now)
+                .build();
+        LocalDateTime reservedTime = LocalDateTime.of(2024, 5, 3, 15, 0);
+        when(reservationRepository.findById(any()))
+                .thenReturn(Optional.of(Reservation.builder()
+                        .approvalState(ApprovalState.ACCEPT)
+                        .checkInAt(null)
+                        .schedule(reservedTime)
+                        .build()
+                ));
+        when(reservationRepository.save(any()))
+                .thenReturn(Reservation.builder().id(1).build());
+
+        //when
+        reservationService.checkIn(dto);
+        ArgumentCaptor<Reservation> captor = ArgumentCaptor.forClass(Reservation.class);
+
+        //then
+        verify(reservationRepository).save(captor.capture());
+        assertEquals(now, captor.getValue().getCheckInAt());
+        assertEquals(reservedTime, captor.getValue().getSchedule());
     }
 }

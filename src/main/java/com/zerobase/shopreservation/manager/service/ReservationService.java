@@ -7,9 +7,13 @@ import com.zerobase.shopreservation.common.entity.Member;
 import com.zerobase.shopreservation.common.entity.Reservation;
 import com.zerobase.shopreservation.common.entity.Shop;
 import com.zerobase.shopreservation.common.exception.ReservationNotExistException;
+import com.zerobase.shopreservation.common.mapper.ReservationMapper;
 import com.zerobase.shopreservation.common.service.BaseService;
+import com.zerobase.shopreservation.common.type.ApprovalState;
 import com.zerobase.shopreservation.common.util.TotalPage;
-import com.zerobase.shopreservation.customer.mapper.ReservationMapper;
+import com.zerobase.shopreservation.customer.exception.PassedCheckInTimeException;
+import com.zerobase.shopreservation.customer.exception.ReservationNotAcceptedException;
+import com.zerobase.shopreservation.manager.dto.CheckInDto;
 import com.zerobase.shopreservation.manager.dto.ReservationApprovalDto;
 import com.zerobase.shopreservation.manager.exception.ShopManagerNotMatchException;
 import com.zerobase.shopreservation.manager.repository.ReservationRepository;
@@ -17,6 +21,7 @@ import com.zerobase.shopreservation.manager.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +34,8 @@ public class ReservationService extends BaseService {
     private final ReservationRepository reservationRepository;
     private final ShopRepository shopRepository;
     private final ReservationMapper reservationMapper;
+
+    private static final int CHECKIN_EARLY_MINUTE = 10;
 
     /**
      * 예약 목록 나열
@@ -82,5 +89,36 @@ public class ReservationService extends BaseService {
         if (!found) {
             throw new ShopManagerNotMatchException();
         }
+    }
+
+    /**
+     * 체크인하기
+     */
+    @Transactional
+    public long checkIn(CheckInDto checkInDto) {
+        // 예약이 존재하는지 확인
+        Optional<Reservation> optionalReservation = reservationRepository.findById(
+                checkInDto.getReservationId()
+        );
+        if (optionalReservation.isEmpty()) {
+            throw new ReservationNotExistException();
+        }
+        Reservation reservation = optionalReservation.get();
+
+        // 체크인 할 수 있는 상태인지 확인 (= 예약시간 10분전인지 확인. 10분전보다 일찍와야 가능한 시나리오)
+        if (checkInDto.getNow().isAfter(reservation.getSchedule().minusMinutes(CHECKIN_EARLY_MINUTE))) {
+            throw new PassedCheckInTimeException();
+        }
+
+        // 예약이 ACCEPT 되었는지 확인
+        if (!reservation.getApprovalState().equals(ApprovalState.ACCEPT)) {
+            throw new ReservationNotAcceptedException(reservation.getApprovalState());
+        }
+
+        // 체크인하고, 저장
+        reservation.setCheckInAt(checkInDto.getNow());
+        Reservation saved = reservationRepository.save(reservation);
+
+        return saved.getId();
     }
 }

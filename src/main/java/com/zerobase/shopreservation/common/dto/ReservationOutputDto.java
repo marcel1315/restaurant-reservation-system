@@ -15,6 +15,7 @@ public class ReservationOutputDto {
     LocalDateTime checkInAt;
     LocalDateTime schedule;
     String phone;
+    String memberName;
 
     public static ReservationOutputDto of(Reservation reservation) {
         return ReservationOutputDto.builder()
@@ -23,6 +24,7 @@ public class ReservationOutputDto {
                 .phone(reservation.getPhone())
                 .approvalState(reservation.getApprovalState())
                 .checkInAt(reservation.getCheckInAt())
+                .memberName(reservation.getMember().getName())
                 .build();
     }
 }

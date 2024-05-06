@@ -1,4 +1,4 @@
-package com.zerobase.shopreservation.customer.mapper;
+package com.zerobase.shopreservation.common.mapper;
 
 import com.zerobase.shopreservation.customer.dto.OneShopSearchDto;
 import com.zerobase.shopreservation.customer.dto.ShopOutputDto;

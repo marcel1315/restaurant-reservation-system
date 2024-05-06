@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zerobase.shopreservation.customer.mapper.ShopMapper">
+<mapper namespace="com.zerobase.shopreservation.common.mapper.ShopMapper">
     <sql id="selectListWhere">
         and NOT s.delete_marker
         <if test="name != null">

@@ -1,6 +1,5 @@
-package com.zerobase.shopreservation.common.filter;
+package com.zerobase.shopreservation.common.security;
 
-import com.zerobase.shopreservation.common.security.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

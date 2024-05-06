@@ -1,6 +1,5 @@
 package com.zerobase.shopreservation.common.security;
 
-import com.zerobase.shopreservation.common.filter.JwtAuthenticationFilter;
 import com.zerobase.shopreservation.common.type.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
