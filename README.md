@@ -22,7 +22,7 @@
 
 ## Database ERD
 
-- ![ERD](ERD.png)
+![ERD](ERD.png)
 
 ## API
 
