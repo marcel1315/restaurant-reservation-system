@@ -10,10 +10,15 @@
 - Spring Validation
 - MariaDB 11.2.3
 - Swagger
+  - API 문서를 제공하기 위해 사용
 - mybatis
+  - 복잡한 동적 SQL 쿼리를 호출하기 위해 사용 
 - jjwt
+  - Spring Security에 사용하는 token을 생성, 파싱 및 검증하기 위해 사용
 - lombok
+  - 코드 자동 생성 기능을 위해 사용
 - mockito
+  - unit test를 작성하기 위해 사용 
 
 ## Database ERD
 
