@@ -5,6 +5,11 @@ import com.zerobase.shopreservation.common.dto.MemberOutputDto;
 import com.zerobase.shopreservation.common.dto.SignupDto;
 import com.zerobase.shopreservation.common.security.TokenProvider;
 import com.zerobase.shopreservation.common.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,23 +24,26 @@ import java.util.HashMap;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "1 - Member", description = "회원 관련")
 public class MemberController {
 
     private final MemberService memberService;
     private final TokenProvider tokenProvider;
 
-    /**
-     * 회원가입
-     */
+    @Operation(
+            summary = "회원가입"
+    )
     @PostMapping("/member/signup")
     public ResponseEntity<?> signup(@Validated @RequestBody SignupDto signupDto) {
         memberService.signup(signupDto);
         return ResponseEntity.ok(null);
     }
 
-    /**
-     * 로그인
-     */
+    @Operation(
+            summary = "로그인",
+            description = "로그인 후 jwt 토큰을 받게 됩니다.\n" +
+                    "해당 토큰을 상단의 'Authorize' 버튼을 눌러 입력해주세요."
+    )
     @PostMapping("/member/login")
     public ResponseEntity<?> login(@Validated @RequestBody LoginDto loginDto) {
         memberService.login(loginDto);
@@ -45,9 +53,9 @@ public class MemberController {
         return ResponseEntity.ok(resultMap);
     }
 
-    /**
-     * 회원 정보 보기
-     */
+    @Operation(
+            summary = "회원정보 보기"
+    )
     @GetMapping("/member/info")
     public ResponseEntity<?> info() {
         MemberOutputDto memberOutputDto = memberService.info();

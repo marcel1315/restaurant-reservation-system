@@ -26,6 +26,7 @@ public class SecurityConfiguration {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll() // Swagger UI
                         .requestMatchers(HttpMethod.POST, "/member/signup").permitAll()
                         .requestMatchers(HttpMethod.POST, "/member/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/member/info").hasAnyAuthority(MemberRole.ROLE_CUSTOMER.toString(), MemberRole.ROLE_MANAGER.toString())
